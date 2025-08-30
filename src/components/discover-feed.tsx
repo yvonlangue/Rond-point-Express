@@ -7,7 +7,11 @@ import { EventCard } from '@/components/event-card';
 import { EventDetailsModal } from '@/components/event-details-modal';
 import { Button } from '@/components/ui/button';
 
-export function DiscoverFeed() {
+interface DiscoverFeedProps {
+  searchTerm?: string;
+}
+
+export function DiscoverFeed({ searchTerm = '' }: DiscoverFeedProps) {
   const [events, setEvents] = useState<Event[]>(mockEvents);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -19,13 +23,27 @@ export function DiscoverFeed() {
   }, [events]);
 
   const filteredEvents = useMemo(() => {
-    if (activeFilters.length === 0) {
-      return events;
+    let filtered = events;
+
+    if (activeFilters.length > 0) {
+      filtered = filtered.filter(event =>
+        activeFilters.some(filter => event.category === filter || event.location === filter)
+      );
     }
-    return events.filter(event =>
-      activeFilters.some(filter => event.category === filter || event.location === filter)
-    );
-  }, [activeFilters, events]);
+
+    if (searchTerm) {
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter(event =>
+        event.title.toLowerCase().includes(lowercasedSearchTerm) ||
+        event.description.toLowerCase().includes(lowercasedSearchTerm) ||
+        event.location.toLowerCase().includes(lowercasedSearchTerm) ||
+        event.organizer.toLowerCase().includes(lowercasedSearchTerm) ||
+        event.category.toLowerCase().includes(lowercasedSearchTerm)
+      );
+    }
+    
+    return filtered;
+  }, [activeFilters, events, searchTerm]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters(prev =>
@@ -42,12 +60,7 @@ export function DiscoverFeed() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold tracking-tight mb-2">Discover Your Next Event</h1>
-        <p className="text-lg text-muted-foreground">Browse, filter, and find experiences tailored for you.</p>
-      </div>
-
+    <div className="container mx-auto px-4 pb-8">
       <div className="bg-card border p-4 mb-8 sticky top-20 z-40">
         <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-grow">
@@ -78,7 +91,7 @@ export function DiscoverFeed() {
       ) : (
         <div className="text-center py-16">
             <p className="text-xl font-medium">No Events Found</p>
-            <p className="text-muted-foreground mt-2">Try adjusting your filters to find more events.</p>
+            <p className="text-muted-foreground mt-2">Try adjusting your filters or search term to find more events.</p>
         </div>
       )}
 
