@@ -72,7 +72,7 @@ export function DiscoverFeed() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold tracking-tight mb-2 uppercase">Discover Your Next Event</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-2">Discover Your Next Event</h1>
         <p className="text-lg text-muted-foreground">Browse, filter, and find experiences tailored for you.</p>
       </div>
 

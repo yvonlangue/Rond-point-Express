@@ -6,7 +6,7 @@ export default function CreateEventPage() {
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <Card className="border">
         <CardHeader className="text-center">
-          <CardTitle className="font-bold text-3xl uppercase">Create a New Event</CardTitle>
+          <CardTitle className="font-bold text-3xl">Create a New Event</CardTitle>
           <CardDescription>Fill out the form below to share your event with the community.</CardDescription>
         </CardHeader>
         <CardContent>

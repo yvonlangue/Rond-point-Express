@@ -24,12 +24,12 @@ export default function ProfilePage() {
           <AvatarFallback className="text-3xl">{user.name.substring(0, 2)}</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-4xl font-bold uppercase">{user.name}</h1>
+          <h1 className="text-4xl font-bold">{user.name}</h1>
           <p className="text-muted-foreground mt-1">{user.bio}</p>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold uppercase mb-4">My Attended Events</h2>
+      <h2 className="text-2xl font-bold mb-4">My Attended Events</h2>
       {attendedEvents.length > 0 ? (
         <div className="space-y-4">
           {attendedEvents.map(event => (

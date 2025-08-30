@@ -45,7 +45,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
         </div>
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-start">
-            <DialogTitle className="font-bold text-3xl pr-4 uppercase">{event.title}</DialogTitle>
+            <DialogTitle className="font-bold text-3xl pr-4">{event.title}</DialogTitle>
             <Badge variant="secondary">{event.category}</Badge>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground pt-2">
