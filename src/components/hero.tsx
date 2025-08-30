@@ -33,7 +33,7 @@ export function Hero({ onSearch }: HeroProps) {
           <Input
             type="search"
             placeholder="Search for events, artists, venues..."
-            className="pl-10 h-12 text-base border"
+            className="pl-10 h-12 text-base border-black"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
