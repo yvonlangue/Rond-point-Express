@@ -17,9 +17,25 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['PT Sans', 'sans-serif'],
-        headline: ['Poppins', 'sans-serif'],
+        sans: ['var(--font-inter)', 'sans-serif'],
+        body: ['var(--font-inter)', 'sans-serif'],
+        headline: ['var(--font-inter)', 'sans-serif'],
         code: ['monospace'],
+      },
+      fontSize: {
+        'xs': '0.790rem',
+        'sm': '0.889rem',
+        'base': '1rem',
+        'lg': '1.125rem',
+        'xl': '1.266rem',
+        '2xl': '1.424rem',
+        '3xl': '1.602rem',
+        '4xl': '1.802rem',
+        '5xl': '2.027rem',
+        '6xl': '2.281rem',
+        '7xl': '2.566rem',
+        '8xl': '2.887rem',
+        '9xl': '3.247rem',
       },
       colors: {
         background: 'hsl(var(--background))',
