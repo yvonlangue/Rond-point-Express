@@ -39,7 +39,7 @@ export function Hero({ onSearch }: HeroProps) {
             onKeyDown={handleKeyDown}
           />
         </div>
-        <Button onClick={handleSearch} size="lg" className="h-12">
+        <Button onClick={handleSearch} size="lg" className="h-12 bg-black text-white hover:bg-black/80">
           Search
         </Button>
       </div>
