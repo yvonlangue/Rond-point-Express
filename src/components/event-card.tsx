@@ -10,7 +10,7 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onOpenModal }: EventCardProps) {
-  const formattedDate = format(parseISO(event.date), 'eeee, MMMM d, yyyy • HH:mm');
+  const formattedDate = format(parseISO(event.date), "eeee, MMMM d, yyyy • HH:mm");
 
   return (
     <Card
