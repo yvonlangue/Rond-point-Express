@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import type { Event } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ArrowRight } from 'lucide-react';
 
 interface EventCardProps {
@@ -10,7 +10,7 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onOpenModal }: EventCardProps) {
-  const formattedDate = format(new Date(event.date), 'eeee, MMMM d, yyyy • HH:mm');
+  const formattedDate = format(parseISO(event.date), 'eeee, MMMM d, yyyy • HH:mm');
 
   return (
     <Card

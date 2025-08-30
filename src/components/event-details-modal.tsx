@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Event } from '@/lib/types';
 import { Calendar, MapPin, User, Ticket } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
 interface EventDetailsModalProps {
@@ -55,7 +55,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground pt-2">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{format(new Date(event.date), 'eeee, MMMM d, yyyy • HH:mm')}</span>
+              <span>{format(parseISO(event.date), 'eeee, MMMM d, yyyy • HH:mm')}</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
