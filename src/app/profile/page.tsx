@@ -24,28 +24,28 @@ export default function ProfilePage() {
           <AvatarFallback className="text-3xl">{user.name.substring(0, 2)}</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-4xl font-headline font-bold">{user.name}</h1>
+          <h1 className="text-4xl font-bold uppercase">{user.name}</h1>
           <p className="text-muted-foreground mt-1">{user.bio}</p>
         </div>
       </div>
 
-      <h2 className="text-2xl font-headline font-semibold mb-4">My Attended Events</h2>
+      <h2 className="text-2xl font-bold uppercase mb-4">My Attended Events</h2>
       {attendedEvents.length > 0 ? (
         <div className="space-y-4">
           {attendedEvents.map(event => (
-            <Card key={event.id} className="hover:shadow-md transition-shadow">
+            <Card key={event.id} className="hover:shadow-md transition-shadow border">
               <CardContent className="p-4 flex gap-4 items-center">
                 <Image
                   src={event.imageUrl}
                   alt={event.title}
                   width={150}
                   height={100}
-                  className="rounded-md object-cover w-36 h-24 hidden sm:block"
+                  className="object-cover w-36 h-24 hidden sm:block"
                   data-ai-hint={`${event.category.toLowerCase()} event`}
                 />
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <h3 className="font-headline text-lg font-semibold">{event.title}</h3>
+                    <h3 className="font-bold text-lg">{event.title}</h3>
                     <Badge variant="outline">{event.category}</Badge>
                   </div>
                   <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
@@ -62,7 +62,7 @@ export default function ProfilePage() {
           ))}
         </div>
       ) : (
-        <div className="text-center text-muted-foreground py-12 border-2 border-dashed rounded-lg">
+        <div className="text-center text-muted-foreground py-12 border-2 border-dashed">
           <p className="font-medium">You haven't attended any events yet.</p>
           <p className="text-sm">Start exploring to find your next adventure!</p>
         </div>

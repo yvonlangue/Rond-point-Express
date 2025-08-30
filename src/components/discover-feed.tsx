@@ -72,11 +72,11 @@ export function DiscoverFeed() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-headline font-bold tracking-tight mb-2">Discover Your Next Event</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-2 uppercase">Discover Your Next Event</h1>
         <p className="text-lg text-muted-foreground">Browse, filter, and find experiences tailored for you.</p>
       </div>
 
-      <div className="bg-card border rounded-lg p-4 mb-8 sticky top-20 z-40">
+      <div className="bg-card border p-4 mb-8 sticky top-20 z-40">
         <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-grow">
                 <p className="text-sm font-medium mb-2">Filter by Category or Location</p>
@@ -86,7 +86,7 @@ export function DiscoverFeed() {
                         key={filter}
                         variant={activeFilters.includes(filter) ? 'default' : 'outline'}
                         onClick={() => toggleFilter(filter)}
-                        className="rounded-full transition-all"
+                        className="transition-all"
                         size="sm"
                     >
                         {filter}
@@ -106,7 +106,6 @@ export function DiscoverFeed() {
                         key={`suggested-${filter}`}
                         variant={activeFilters.includes(filter) ? 'default' : 'secondary'}
                         onClick={() => toggleFilter(filter)}
-                        className="rounded-full"
                         size="sm"
                     >
                         {filter}

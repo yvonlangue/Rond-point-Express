@@ -13,7 +13,7 @@ interface EventCardProps {
 
 export function EventCard({ event, onOpenModal }: EventCardProps) {
   return (
-    <Card className="flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300 rounded-lg group">
+    <Card className="flex flex-col overflow-hidden transition-shadow duration-300 group border">
       <CardHeader className="p-0 relative">
         <div className="overflow-hidden">
           <Image
@@ -30,7 +30,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
         </Badge>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
-        <CardTitle className="font-headline text-lg mb-2 truncate group-hover:text-primary transition-colors">
+        <CardTitle className="font-bold text-lg mb-2 truncate group-hover:text-blue-600 transition-colors">
           {event.title}
         </CardTitle>
         <div className="text-sm text-muted-foreground flex items-center gap-2 mb-2">

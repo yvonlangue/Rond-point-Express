@@ -39,13 +39,13 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             alt={event.title}
             width={600}
             height={300}
-            className="w-full h-64 object-cover rounded-t-lg"
+            className="w-full h-64 object-cover"
             data-ai-hint={`${event.category.toLowerCase()} event detail`}
           />
         </div>
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-start">
-            <DialogTitle className="font-headline text-3xl pr-4">{event.title}</DialogTitle>
+            <DialogTitle className="font-bold text-3xl pr-4 uppercase">{event.title}</DialogTitle>
             <Badge variant="secondary">{event.category}</Badge>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground pt-2">
@@ -64,7 +64,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           </div>
         </DialogHeader>
         <div className="px-6 pb-6 space-y-4">
-          <p className="text-body text-base text-foreground/80 leading-relaxed">
+          <p className="text-base text-foreground/80 leading-relaxed">
             {event.description}
           </p>
           <Button onClick={handleAttend} className="w-full" size="lg">
