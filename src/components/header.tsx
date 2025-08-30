@@ -10,12 +10,10 @@ export function Header() {
         <span className="text-xl font-bold">Rond-point Express</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
-        <Button variant="link" asChild>
-          <Link href="/profile" className="flex items-center gap-2 text-sm font-medium">
+        <Link href="/profile" className="flex items-center gap-2 text-sm font-medium underline">
             <UserCircle className="h-5 w-5" />
             Profile
-          </Link>
-        </Button>
+        </Link>
         <Button asChild>
           <Link href="/create-event">Create Event</Link>
         </Button>

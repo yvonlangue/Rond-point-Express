@@ -1,23 +1,16 @@
 'use client';
 
-import { useState, useEffect, useMemo, useTransition } from 'react';
+import { useState, useMemo } from 'react';
 import type { Event } from '@/lib/types';
 import { mockEvents } from '@/lib/events';
 import { EventCard } from '@/components/event-card';
 import { EventDetailsModal } from '@/components/event-details-modal';
 import { Button } from '@/components/ui/button';
-import { Sparkles } from 'lucide-react';
-import { generateQuickFilters } from '@/ai/flows/generate-quick-filters';
-import { useToast } from '@/hooks/use-toast';
 
 export function DiscoverFeed() {
   const [events, setEvents] = useState<Event[]>(mockEvents);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [suggestedFilters, setSuggestedFilters] = useState<string[]>([]);
-  const [isPending, startTransition] = useTransition();
-
-  const { toast } = useToast();
 
   const allFilterableItems = useMemo(() => {
     const categories = [...new Set(events.map(e => e.category))];
@@ -48,27 +41,6 @@ export function DiscoverFeed() {
     setSelectedEvent(null);
   };
 
-  const handleGenerateSuggestions = () => {
-    startTransition(async () => {
-      try {
-        const userHistory = 'User has shown interest in outdoor music festivals and modern art exhibitions in urban areas.';
-        const result = await generateQuickFilters({ userHistory });
-        setSuggestedFilters(prev => [...new Set([...prev, ...result.suggestedFilters])]);
-        toast({
-          title: 'Suggestions Ready!',
-          description: 'We have generated some quick filters based on your interests.',
-        });
-      } catch (error) {
-        console.error('Failed to generate quick filters:', error);
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not generate filter suggestions at this time.',
-        });
-      }
-    });
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
@@ -87,25 +59,6 @@ export function DiscoverFeed() {
                         variant={activeFilters.includes(filter) ? 'default' : 'outline'}
                         onClick={() => toggleFilter(filter)}
                         className="transition-all"
-                        size="sm"
-                    >
-                        {filter}
-                    </Button>
-                    ))}
-                </div>
-            </div>
-             <div className="flex-shrink-0 sm:border-l sm:pl-4">
-                <p className="text-sm font-medium mb-2">AI Suggestions</p>
-                 <div className="flex flex-wrap gap-2">
-                    <Button onClick={handleGenerateSuggestions} disabled={isPending} variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground">
-                        <Sparkles className={`mr-2 h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
-                        {isPending ? 'Generating...' : 'Smart Filters'}
-                    </Button>
-                    {suggestedFilters.map(filter => (
-                    <Button
-                        key={`suggested-${filter}`}
-                        variant={activeFilters.includes(filter) ? 'default' : 'secondary'}
-                        onClick={() => toggleFilter(filter)}
                         size="sm"
                     >
                         {filter}
