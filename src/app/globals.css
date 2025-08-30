@@ -89,6 +89,6 @@ body {
     @apply text-foreground;
   }
   a:hover {
-    @apply border-b border-b-black;
+    @apply border-b-0;
   }
 }
