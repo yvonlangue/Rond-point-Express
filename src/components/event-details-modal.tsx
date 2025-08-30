@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,12 +45,17 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-start">
             <DialogTitle className="font-bold text-3xl pr-4">{event.title}</DialogTitle>
-            <Badge variant="secondary">{event.category}</Badge>
+            <div className='flex flex-col items-end gap-2'>
+              <Badge variant="secondary">{event.category}</Badge>
+              <p className="text-lg font-bold">
+                {event.price ? `€${event.price}` : 'Free'}
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground pt-2">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{format(new Date(event.date), 'EEEE, MMMM d, yyyy')}</span>
+              <span>{format(new Date(event.date), 'eeee, MMMM d, yyyy • HH:mm')}</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />

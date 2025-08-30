@@ -39,4 +39,5 @@ export type Event = {
   category: EventCategory;
   imageUrl: string;
   organizer: string;
+  price?: number;
 };
