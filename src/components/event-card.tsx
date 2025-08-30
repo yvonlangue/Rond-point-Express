@@ -14,7 +14,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
 
   return (
     <Card
-      className="flex flex-col overflow-hidden cursor-pointer group border"
+      className="flex flex-col overflow-hidden cursor-pointer group border border-black"
       onClick={() => onOpenModal(event)}
     >
       <div className="overflow-hidden">
@@ -46,7 +46,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
         </div>
       </CardContent>
 
-      <CardFooter className="p-0 border-t">
+      <CardFooter className="p-0 border-t border-black">
         <div className="flex items-center justify-center w-full p-3 font-bold text-sm">
           View Details
           <ArrowRight className="w-4 h-4 ml-2" />
