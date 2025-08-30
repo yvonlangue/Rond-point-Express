@@ -14,7 +14,7 @@ export function Header() {
             <UserCircle className="h-5 w-5" />
             Profile
         </Link>
-        <Button asChild>
+        <Button asChild className="bg-black text-white hover:bg-black/80 hover:no-underline">
           <Link href="/create-event">Create Event</Link>
         </Button>
       </nav>
