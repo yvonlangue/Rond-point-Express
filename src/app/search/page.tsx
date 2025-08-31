@@ -27,7 +27,7 @@ function SearchPageContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense>
       <SearchPageContent />
     </Suspense>
   );

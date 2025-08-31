@@ -19,18 +19,18 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
     >
       <div className="overflow-hidden">
         <Image
-          src={event.imageUrl}
+          src={event.images[0]}
           alt={event.title}
           width={400}
           height={250}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-          data-ai-hint={`${event.category.toLowerCase()} event`}
+          data-ai-hint={`${event.artType.toLowerCase()} event`}
         />
       </div>
 
       <CardContent className="p-4 flex-grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
-          <p className="text-sm">{event.category}</p>
+          <p className="text-sm">{event.artType}</p>
           <p className="text-sm font-medium">
             {event.price ? `€${event.price}` : 'Free'}
           </p>

@@ -12,7 +12,8 @@ export default function Home() {
   const filteredEvents = mockEvents.filter(event =>
     event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.category.toLowerCase().includes(searchTerm.toLowerCase())
+    event.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    event.artType.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

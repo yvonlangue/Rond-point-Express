@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Calendar as CalendarIcon, MapPin, Accessibility } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
-import { eventCategories } from '@/lib/types';
+import { artTypes } from '@/lib/types';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
@@ -53,9 +53,9 @@ export function FilterSidebar() {
         </div>
 
         <div>
-          <h4 className="font-semibold mb-2">Categories</h4>
+          <h4 className="font-semibold mb-2">Art Type</h4>
           <div className="space-y-2">
-            {eventCategories.slice(0, 8).map(category => (
+            {artTypes.slice(0, 8).map(category => (
               <div key={category} className="flex items-center">
                 <Checkbox id={category} />
                 <label htmlFor={category} className="ml-2 text-sm">{category}</label>

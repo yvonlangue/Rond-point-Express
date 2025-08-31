@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { eventCategories } from '@/lib/types';
+import { artTypes } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
@@ -35,7 +35,7 @@ const eventFormSchema = z.object({
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
   location: z.string().min(2, { message: 'Location is required.' }),
   date: z.date({ required_error: 'A date for the event is required.' }),
-  category: z.enum(eventCategories, { required_error: 'Please select an event category.' }),
+  artType: z.enum(artTypes, { required_error: 'Please select an art type.' }),
   organizer: z.string().min(2, { message: 'Organizer name is required.' }),
   price: z.coerce.number().optional(),
 });
@@ -141,18 +141,18 @@ export function EventForm() {
           />
           <FormField
             control={form.control}
-            name="category"
+            name="artType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>Art Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue placeholder="Select an art type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {eventCategories.map(category => (
+                    {artTypes.map(category => (
                       <SelectItem key={category} value={category}>
                         {category}
                       </SelectItem>

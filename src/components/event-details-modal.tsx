@@ -25,19 +25,19 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
       <DialogContent className="sm:max-w-2xl p-0 gap-0">
         <div className="relative">
           <Image
-            src={event.imageUrl}
+            src={event.images[0]}
             alt={event.title}
             width={600}
             height={300}
             className="w-full h-64 object-cover"
-            data-ai-hint={`${event.category.toLowerCase()} event detail`}
+            data-ai-hint={`${event.artType.toLowerCase()} event detail`}
           />
         </div>
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-start">
             <DialogTitle className="font-bold text-3xl pr-4">{event.title}</DialogTitle>
             <div className='flex flex-col items-end gap-2'>
-              <Badge variant="outline">{event.category}</Badge>
+              <Badge variant="outline">{event.artType}</Badge>
               <p className="text-lg font-bold">
                 {event.price ? `€${event.price}` : 'Free'}
               </p>
