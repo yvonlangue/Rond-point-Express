@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Event } from '@/lib/types';
 import { format, parseISO } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
+import { Star } from 'lucide-react';
 
 interface EventCardProps {
   event: Event;
@@ -14,9 +16,15 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
 
   return (
     <Card
-      className="flex flex-col overflow-hidden cursor-pointer group border"
+      className="flex flex-col overflow-hidden cursor-pointer group border relative"
       onClick={() => onOpenModal(event)}
     >
+      {event.isFeatured && (
+         <Badge variant="default" className="absolute top-2 right-2 z-10">
+          <Star className="w-3 h-3 mr-1" />
+          Featured
+        </Badge>
+      )}
       <div className="overflow-hidden">
         <Image
           src={event.images[0]}

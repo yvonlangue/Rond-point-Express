@@ -1,12 +1,16 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { mockEvents } from '@/lib/events';
 import { format } from 'date-fns';
-import { Calendar, MapPin, Edit, Trash2, Zap, LogIn } from 'lucide-react';
+import { Calendar, MapPin, Edit, Trash2, Zap, LogIn, LineChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+const FREE_EVENT_LIMIT = 3;
 
 function PremiumUpgradeCTA() {
   return (
@@ -69,6 +73,7 @@ export default function ProfilePage() {
   }
 
   const createdEvents = mockEvents.filter(event => organizer.createdEventIds.includes(event.id));
+  const hasReachedFreeLimit = !organizer.isPremium && createdEvents.length >= FREE_EVENT_LIMIT;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -79,16 +84,26 @@ export default function ProfilePage() {
               <h1 className="text-4xl font-bold">My Dashboard</h1>
               <p className="text-muted-foreground">Welcome back, {user.displayName}!</p>
             </div>
-            <Button asChild>
+            <Button asChild disabled={hasReachedFreeLimit}>
               <Link href="/create-event">Create New Event</Link>
             </Button>
           </div>
+
+          {hasReachedFreeLimit && (
+            <Alert variant="default" className="mb-8 bg-amber-50 border-amber-200 text-amber-900">
+               <Zap className="h-4 w-4 !text-amber-600" />
+              <AlertDescription>
+                You've reached your limit of {FREE_EVENT_LIMIT} free events. 
+                <Link href="/premium" className="font-bold underline hover:text-amber-700"> Upgrade to Premium</Link> to create unlimited events.
+              </AlertDescription>
+            </Alert>
+          )}
 
           {createdEvents.length > 0 ? (
             <div className="space-y-4">
               {createdEvents.map(event => (
                 <Card key={event.id} className="border">
-                  <CardContent className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-center">
+                  <CardContent className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-bold text-lg">{event.title}</h3>
                       <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
@@ -100,7 +115,13 @@ export default function ProfilePage() {
                         <span>{event.location}</span>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                       {organizer.isPremium && (
+                        <Button variant="outline" size="icon" disabled>
+                            <LineChart className="w-4 h-4" />
+                            <span className="sr-only">Analytics</span>
+                        </Button>
+                       )}
                       <Button variant="outline" size="icon">
                         <Edit className="w-4 h-4" />
                         <span className="sr-only">Edit</span>
