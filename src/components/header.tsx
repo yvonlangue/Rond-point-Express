@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CircleDot } from 'lucide-react';
+import { CircleDot, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 
 export function Header() {
@@ -18,17 +18,34 @@ export function Header() {
       <nav className="hidden lg:flex flex-1 justify-center items-center gap-8">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground"
+          className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Events
+        </Link>
+        <Link
+          href="/search"
+          className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          Search
         </Link>
       </nav>
 
       <div className="flex items-center gap-4 ml-auto">
         {loading ? null : user ? (
           <>
+            {user.role === 'admin' && (
+              <Button variant="ghost" asChild size="sm">
+                <Link href="/admin" className="flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  Admin
+                </Link>
+              </Button>
+            )}
             <Button variant="ghost" asChild>
-              <Link href="/profile">Organizer Dashboard</Link>
+              <Link href="/profile">Dashboard</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/create-event">Create Event</Link>
             </Button>
             <Button onClick={signOutUser} variant="outline">Sign Out</Button>
           </>

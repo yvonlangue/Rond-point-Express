@@ -7,15 +7,15 @@ import {
   useEffect,
   ReactNode,
 } from 'react';
-import {
-  User,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+
+interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
     });
@@ -41,21 +41,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await auth.signInWithPopup({});
       router.push('/profile');
     } catch (error) {
       console.error('Error signing in with Google: ', error);
+      alert('Sign-in failed. Please try again.');
     }
   };
 
   const signOutUser = async () => {
     try {
-      await signOut(auth);
+      await auth.signOut();
       router.push('/');
     } catch (error) {
       console.error('Error signing out: ', error);
+      alert('Sign-out failed. Please try again.');
     }
   };
 
