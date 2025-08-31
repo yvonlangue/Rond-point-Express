@@ -27,6 +27,9 @@ export function Header() {
             <Button variant="ghost" asChild>
               <Link href="/profile">Organizer Dashboard</Link>
             </Button>
+            <Button asChild>
+              <Link href="/create-event">Create Event</Link>
+            </Button>
           </>
         ) : (
           <>
@@ -34,7 +37,7 @@ export function Header() {
               <Link href="/profile">Login</Link>
             </Button>
             <Button asChild>
-              <Link href="/create-event">Sign Up</Link>
+              <Link href="/profile">Sign Up</Link>
             </Button>
           </>
         )}

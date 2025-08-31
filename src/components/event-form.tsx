@@ -37,6 +37,7 @@ const eventFormSchema = z.object({
   date: z.date({ required_error: 'A date for the event is required.' }),
   category: z.enum(eventCategories, { required_error: 'Please select an event category.' }),
   organizer: z.string().min(2, { message: 'Organizer name is required.' }),
+  price: z.coerce.number().optional(),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
@@ -191,6 +192,19 @@ export function EventForm() {
             )}
           />
         </div>
+         <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price (€) - Optional</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="Enter 0 for a free event" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'Submitting...' : 'Create Event'}

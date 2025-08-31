@@ -11,17 +11,17 @@ export default function CreateEventPage() {
       <div className="container mx-auto px-4 py-8 max-w-md text-center">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Access Denied</CardTitle>
+            <CardTitle className="text-2xl">Create Your Event</CardTitle>
             <CardDescription>
-              You must be signed in to create an event. Please sign in or create an account to continue.
+              To create and manage events, you need an account. Please sign in or create one to continue.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <Button asChild>
+            <Button asChild size="lg">
               <Link href="/profile">Sign In</Link>
             </Button>
-            <Button variant="outline" asChild>
-              <Link href="/">Explore Events</Link>
+            <Button variant="outline" asChild size="lg">
+              <Link href="/profile">Sign Up</Link>
             </Button>
           </CardContent>
         </Card>
