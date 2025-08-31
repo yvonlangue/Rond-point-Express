@@ -1,15 +1,27 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
 import { EventForm } from '@/components/event-form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function CreateEventPage() {
-  const isSignedIn = false;
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-  if (!isSignedIn) {
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/profile');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-md text-center">
-        <Card>
+         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Create Your Event</CardTitle>
             <CardDescription>
@@ -17,11 +29,9 @@ export default function CreateEventPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <Button asChild size="lg">
+            <p className="text-muted-foreground">Redirecting to sign-in...</p>
+            <Button asChild size="lg" disabled>
               <Link href="/profile">Sign In</Link>
-            </Button>
-            <Button variant="outline" asChild size="lg">
-              <Link href="/profile">Sign Up</Link>
             </Button>
           </CardContent>
         </Card>

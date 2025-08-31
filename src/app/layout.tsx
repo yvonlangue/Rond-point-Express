@@ -1,12 +1,20 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins, PT_Sans } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/header';
 import './globals.css';
+import { AuthProvider } from '@/hooks/use-auth';
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ['latin'],
-  variable: '--font-inter',
+  weight: ['400', '600', '700'],
+  variable: '--font-poppins',
+});
+
+const ptSans = PT_Sans({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-pt-sans',
 });
 
 export const metadata: Metadata = {
@@ -20,15 +28,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${ptSans.variable}`}>
       <head>
       </head>
       <body className="antialiased">
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-1 bg-background">{children}</main>
-        </div>
-        <Toaster />
+        <AuthProvider>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1 bg-background">{children}</main>
+          </div>
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

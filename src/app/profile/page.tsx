@@ -1,9 +1,12 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { mockEvents } from '@/lib/events';
 import { format } from 'date-fns';
-import { Calendar, MapPin, Edit, Trash2, Zap } from 'lucide-react';
+import { Calendar, MapPin, Edit, Trash2, Zap, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
 
 function PremiumUpgradeCTA() {
   return (
@@ -28,44 +31,54 @@ function PremiumUpgradeCTA() {
 
 
 export default function ProfilePage() {
-  // Mock data for demonstration
-  const isSignedIn = true; 
-  const user = {
-    name: 'Alex Doe',
-    // For now, assume the user is the organizer of a few mock events
+  const { user, loading, signInWithGoogle } = useAuth();
+  
+  // Mock data for demonstration - will be replaced with real user data
+  const organizer = {
+    name: user?.displayName || 'Alex Doe',
     createdEventIds: [mockEvents[0].id, mockEvents[2].id, mockEvents[4].id],
     isPremium: false, // Mock premium status
   };
 
-  if (!isSignedIn) {
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-md text-center">
         <Card>
-          <CardContent className="p-8">
-            <h1 className="text-2xl font-bold mb-4">Welcome</h1>
-            <p className="text-muted-foreground mb-6">
-              Sign in or create an account to manage your events.
-            </p>
-            <div className="flex flex-col gap-4">
-              <Button size="lg">Sign In</Button>
-              <Button size="lg" variant="outline">
-                Create an Account
-              </Button>
-            </div>
+          <CardHeader>
+            <CardTitle className="text-2xl">Access Your Dashboard</CardTitle>
+            <CardDescription>
+              Sign in to manage your events or create a new account to get started.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <Button size="lg" className="w-full" onClick={signInWithGoogle}>
+              <LogIn className="mr-2 h-4 w-4" /> Sign in with Google
+            </Button>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const createdEvents = mockEvents.filter(event => user.createdEventIds.includes(event.id));
+  const createdEvents = mockEvents.filter(event => organizer.createdEventIds.includes(event.id));
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid gap-12 md:grid-cols-[1fr_300px]">
         <div>
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold">My Events Dashboard</h1>
+            <div>
+              <h1 className="text-4xl font-bold">My Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {user.displayName}!</p>
+            </div>
             <Button asChild>
               <Link href="/create-event">Create New Event</Link>
             </Button>
@@ -109,7 +122,7 @@ export default function ProfilePage() {
           )}
         </div>
         <aside className="space-y-8">
-          {!user.isPremium && <PremiumUpgradeCTA />}
+          {!organizer.isPremium && <PremiumUpgradeCTA />}
         </aside>
       </div>
     </div>
