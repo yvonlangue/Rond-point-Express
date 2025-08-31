@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Event } from '@/lib/types';
 import { Calendar, MapPin, User, Ticket } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
 interface EventDetailsModalProps {
@@ -29,6 +29,8 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
     onClose();
   };
 
+  const formattedDate = format(parseISO(event.date), "eeee, MMMM d, yyyy • HH:mm");
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl p-0 gap-0">
@@ -46,7 +48,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           <div className="flex justify-between items-start">
             <DialogTitle className="font-bold text-3xl pr-4">{event.title}</DialogTitle>
             <div className='flex flex-col items-end gap-2'>
-              <Badge variant="secondary">{event.category}</Badge>
+              <Badge variant="outline">{event.category}</Badge>
               <p className="text-lg font-bold">
                 {event.price ? `€${event.price}` : 'Free'}
               </p>
@@ -55,7 +57,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground pt-2">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{format(new Date(event.date), "eeee, MMMM d, yyyy • HH:mm")}</span>
+              <span>{formattedDate}</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />

@@ -11,7 +11,7 @@ export function Header() {
       </Link>
       
       <nav className="hidden lg:flex flex-1 justify-center items-center gap-8">
-        <Link href="/" className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg bg-secondary">
+        <Link href="/" className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground">
           <Calendar className="h-5 w-5" />
           Discover
         </Link>

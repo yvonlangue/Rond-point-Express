@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { mockEvents } from '@/lib/events';
 import type { Event } from '@/lib/types';
@@ -12,7 +12,7 @@ import { Button } from './ui/button';
 import { List, LayoutGrid, SlidersHorizontal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
-export function SearchResults() {
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   
@@ -54,10 +54,10 @@ export function SearchResults() {
                 Filters
               </Button>
               <div className="flex items-center border rounded-md">
-                <Button variant={viewMode === 'grid' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('grid')}>
+                <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="icon" onClick={() => setViewMode('grid')}>
                   <LayoutGrid className="w-5 h-5" />
                 </Button>
-                <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('list')}>
+                <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="icon" onClick={() => setViewMode('list')}>
                   <List className="w-5 h-5" />
                 </Button>
               </div>
@@ -97,4 +97,12 @@ export function SearchResults() {
       )}
     </div>
   );
+}
+
+export function SearchResults() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchResultsContent />
+    </Suspense>
+  )
 }
