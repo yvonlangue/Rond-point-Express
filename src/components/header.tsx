@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CircleDot, Calendar, MapPin } from 'lucide-react';
+import { CircleDot, Calendar } from 'lucide-react';
 
 export function Header() {
   return (
@@ -14,10 +14,6 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground">
           <Calendar className="h-5 w-5" />
           Discover
-        </Link>
-        <Link href="#" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-          <MapPin className="h-5 w-5" />
-          Map
         </Link>
       </nav>
 
