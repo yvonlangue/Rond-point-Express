@@ -1,23 +1,38 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CircleDot, UserCircle } from 'lucide-react';
+import { CircleDot, Calendar, Search, MapPin } from 'lucide-react';
 
 export function Header() {
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center bg-background border-b sticky top-0 z-50">
-      <Link href="/" className="flex items-center justify-center gap-2">
+      <Link href="/" className="flex items-center justify-start gap-2">
         <CircleDot className="h-6 w-6 text-primary" />
         <span className="text-xl font-bold">Rond-point Express</span>
       </Link>
-      <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
-        <Link href="/profile" className="flex items-center gap-2 text-sm font-medium underline">
-            <UserCircle className="h-5 w-5" />
-            Profile
+      
+      <nav className="hidden lg:flex flex-1 justify-center items-center gap-8">
+        <Link href="/" className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg bg-secondary">
+          <Calendar className="h-5 w-5" />
+          Discover
         </Link>
-        <Button asChild className="bg-black text-white hover:bg-black/80 hover:no-underline">
-          <Link href="/create-event">Create Event</Link>
-        </Button>
+        <Link href="#" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+          <Search className="h-5 w-5" />
+          Search
+        </Link>
+        <Link href="#" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+          <MapPin className="h-5 w-5" />
+          Map
+        </Link>
       </nav>
+
+      <div className="flex items-center gap-4 ml-auto">
+        <Button variant="ghost" asChild>
+          <Link href="/profile">Sign In</Link>
+        </Button>
+        <Button asChild>
+          <Link href="/create-event">Join Now</Link>
+        </Button>
+      </div>
     </header>
   );
 }
