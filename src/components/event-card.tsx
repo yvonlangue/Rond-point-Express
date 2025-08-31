@@ -1,8 +1,7 @@
 import Image from 'next/image';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import type { Event } from '@/lib/types';
 import { format, parseISO } from 'date-fns';
-import { ArrowRight } from 'lucide-react';
 
 interface EventCardProps {
   event: Event;
@@ -14,7 +13,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
 
   return (
     <Card
-      className="flex flex-col overflow-hidden cursor-pointer group border border-black"
+      className="flex flex-col overflow-hidden cursor-pointer group border"
       onClick={() => onOpenModal(event)}
     >
       <div className="overflow-hidden">
@@ -45,13 +44,6 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
           <p>Organized by {event.organizer}</p>
         </div>
       </CardContent>
-
-      <CardFooter className="p-0 border-t border-black">
-        <div className="flex items-center justify-center w-full p-3 font-bold text-sm">
-          View Details
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </div>
-      </CardFooter>
     </Card>
   );
 }

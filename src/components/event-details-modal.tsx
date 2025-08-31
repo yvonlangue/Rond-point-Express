@@ -5,12 +5,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Event } from '@/lib/types';
-import { Calendar, MapPin, User, Ticket } from 'lucide-react';
+import { Calendar, MapPin, User } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { useToast } from '@/hooks/use-toast';
 
 interface EventDetailsModalProps {
   event: Event;
@@ -19,16 +17,6 @@ interface EventDetailsModalProps {
 }
 
 export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalProps) {
-  const { toast } = useToast();
-
-  const handleAttend = () => {
-    toast({
-      title: "You're going!",
-      description: `You are now attending "${event.title}".`,
-    });
-    onClose();
-  };
-
   const formattedDate = format(parseISO(event.date), "eeee, MMMM d, yyyy • HH:mm");
 
   return (
@@ -73,10 +61,6 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           <p className="text-base text-foreground/80 leading-relaxed">
             {event.description}
           </p>
-          <Button onClick={handleAttend} className="w-full" size="lg">
-            <Ticket className="mr-2 h-5 w-5" />
-            Attend Event
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

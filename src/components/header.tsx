@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CircleDot, Calendar, PlusCircle } from 'lucide-react';
+import { CircleDot } from 'lucide-react';
 
 export function Header() {
   const isSignedIn = false;
@@ -17,8 +17,7 @@ export function Header() {
           href="/"
           className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground"
         >
-          <Calendar className="h-5 w-5" />
-          Discover
+          Events
         </Link>
       </nav>
 
@@ -26,22 +25,16 @@ export function Header() {
         {isSignedIn ? (
           <>
             <Button variant="ghost" asChild>
-              <Link href="/profile">Profile</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/create-event">
-                <PlusCircle className="mr-2 h-5 w-5" />
-                Create Event
-              </Link>
+              <Link href="/profile">Organizer Dashboard</Link>
             </Button>
           </>
         ) : (
           <>
             <Button variant="ghost" asChild>
-              <Link href="/profile">Sign In</Link>
+              <Link href="/profile">Login</Link>
             </Button>
             <Button asChild>
-              <Link href="/create-event">Join Now</Link>
+              <Link href="/create-event">Sign Up</Link>
             </Button>
           </>
         )}
