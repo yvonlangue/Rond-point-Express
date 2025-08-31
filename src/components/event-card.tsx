@@ -32,7 +32,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
         <div className="flex justify-between items-start mb-2">
           <p className="text-sm">{event.artType}</p>
           <p className="text-sm font-medium">
-            {event.price ? `€${event.price}` : 'Free'}
+            {event.price ? `${event.price.toLocaleString()} XAF` : 'Free'}
           </p>
         </div>
         <h3 className="text-xl font-bold mb-2">{event.title}</h3>

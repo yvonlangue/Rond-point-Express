@@ -223,7 +223,7 @@ export function EventForm() {
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price (€) - Optional</FormLabel>
+                  <FormLabel>Price (XAF) - Optional</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="Enter 0 for a free event" {...field} />
                   </FormControl>

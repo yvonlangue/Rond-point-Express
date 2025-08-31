@@ -39,7 +39,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             <div className='flex flex-col items-end gap-2'>
               <Badge variant="outline">{event.artType}</Badge>
               <p className="text-lg font-bold">
-                {event.price ? `€${event.price}` : 'Free'}
+                {event.price ? `${event.price.toLocaleString()} XAF` : 'Free'}
               </p>
             </div>
           </div>
