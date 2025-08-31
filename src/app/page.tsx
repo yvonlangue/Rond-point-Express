@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Hero } from '@/components/hero';
-import { SearchResults } from '@/components/search-results';
+import { DiscoverFeed } from '@/components/discover-feed';
 import { mockEvents } from '@/lib/events';
 import type { Event } from '@/lib/types';
 
@@ -17,8 +17,8 @@ export default function Home() {
 
   return (
     <>
-      <Hero onSearch={setSearchTerm} />
-      <SearchResults events={filteredEvents} searchTerm={searchTerm} />
+      <Hero />
+      <DiscoverFeed events={filteredEvents} />
     </>
   );
 }

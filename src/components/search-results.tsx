@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useMemo } from 'react';
+import { useState } from 'react';
 import type { Event } from '@/lib/types';
 import { EventCard } from './event-card';
 import { EventDetailsModal } from './event-details-modal';
@@ -8,13 +8,15 @@ import { FilterSidebar } from './filter-sidebar';
 import { Button } from './ui/button';
 import { List, LayoutGrid, SlidersHorizontal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useSearchParams } from 'next/navigation';
 
 interface SearchResultsProps {
   events: Event[];
-  searchTerm: string;
 }
 
-function SearchResultsContent({ events, searchTerm }: SearchResultsProps) {
+export function SearchResults({ events }: SearchResultsProps) {
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams.get('q') || '';
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -84,12 +86,4 @@ function SearchResultsContent({ events, searchTerm }: SearchResultsProps) {
       )}
     </div>
   );
-}
-
-export function SearchResults({ events, searchTerm }: SearchResultsProps) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SearchResultsContent events={events} searchTerm={searchTerm} />
-    </Suspense>
-  )
 }

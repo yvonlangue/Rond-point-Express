@@ -3,16 +3,16 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-interface HeroProps {
-  onSearch: (term: string) => void;
-}
-
-export function Hero({ onSearch }: HeroProps) {
+export function Hero() {
   const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
 
   const handleSearch = () => {
-    onSearch(searchTerm.trim());
+    if (searchTerm.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -33,13 +33,13 @@ export function Hero({ onSearch }: HeroProps) {
           <Input
             type="search"
             placeholder="Search for events, artists, venues..."
-            className="pl-10 h-12 text-base border-black"
+            className="pl-10 h-12 text-base"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
           />
         </div>
-        <Button onClick={handleSearch} size="lg" className="h-12 bg-black text-white hover:bg-black/80">
+        <Button onClick={handleSearch} size="lg" className="h-12">
           Search
         </Button>
       </div>
