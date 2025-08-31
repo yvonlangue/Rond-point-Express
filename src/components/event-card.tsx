@@ -24,7 +24,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
           width={400}
           height={250}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-          data-ai-hint={`${event.artType.toLowerCase()} event`}
+          data-ai-hint="Cameroonian art"
         />
       </div>
 

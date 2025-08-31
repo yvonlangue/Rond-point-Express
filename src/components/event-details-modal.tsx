@@ -30,7 +30,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             width={600}
             height={300}
             className="w-full h-64 object-cover"
-            data-ai-hint={`${event.artType.toLowerCase()} event detail`}
+            data-ai-hint="Douala gallery"
           />
         </div>
         <DialogHeader className="p-6 pb-2">
