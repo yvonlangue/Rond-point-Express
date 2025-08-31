@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -16,10 +17,10 @@ export function DiscoverFeed({ searchTerm = '' }: DiscoverFeedProps) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  const allFilterableItems = useMemo(() => {
+  const { categories, locations } = useMemo(() => {
     const categories = [...new Set(events.map(e => e.category))];
     const locations = [...new Set(events.map(e => e.location))];
-    return [...new Set([...categories, ...locations])];
+    return { categories, locations };
   }, [events]);
 
   const filteredEvents = useMemo(() => {
@@ -62,11 +63,27 @@ export function DiscoverFeed({ searchTerm = '' }: DiscoverFeedProps) {
   return (
     <div className="container mx-auto px-4 pb-8">
       <div className="bg-card border p-4 mb-8 sticky top-20 z-40">
-        <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-grow">
-                <p className="text-sm font-medium mb-2">Filter by Category or Location</p>
+        <div className="flex flex-col gap-4">
+            <div>
+                <p className="text-sm font-medium mb-2">Filter by Category</p>
                  <div className="flex flex-wrap gap-2">
-                    {allFilterableItems.map(filter => (
+                    {categories.map(filter => (
+                    <Button
+                        key={filter}
+                        variant={activeFilters.includes(filter) ? 'default' : 'outline'}
+                        onClick={() => toggleFilter(filter)}
+                        className="transition-all"
+                        size="sm"
+                    >
+                        {filter}
+                    </Button>
+                    ))}
+                </div>
+            </div>
+             <div>
+                <p className="text-sm font-medium mb-2">Filter by Location</p>
+                 <div className="flex flex-wrap gap-2">
+                    {locations.map(filter => (
                     <Button
                         key={filter}
                         variant={activeFilters.includes(filter) ? 'default' : 'outline'}
