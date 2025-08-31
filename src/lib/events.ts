@@ -6,7 +6,7 @@ import type { Event } from './types';
 export const mockEvents: Event[] = [
   {
     id: '1',
-    title: 'Summer Music Fest',
+    title: 'Douala Rhythms Live',
     description: 'An outdoor music festival featuring a variety of bands and artists. Enjoy live music, food trucks, and a vibrant atmosphere under the summer sun. Bring your friends and family for an unforgettable weekend of entertainment.',
     date: '2025-09-10T19:00:00.000Z',
     location: 'Annie Kadji Art Gallery',
@@ -22,7 +22,7 @@ export const mockEvents: Event[] = [
   },
   {
     id: '2',
-    title: 'Modern Art Exhibition',
+    title: 'Yaoundé Art Now',
     description: 'Explore a curated collection of modern art from emerging and established artists. The exhibition showcases paintings, sculptures, and interactive installations that challenge perception and inspire creativity.',
     date: '2025-09-15T18:00:00.000Z',
     location: 'artBakery',
@@ -37,7 +37,7 @@ export const mockEvents: Event[] = [
   },
   {
     id: '3',
-    title: 'Gourmet Food Fair',
+    title: 'Ancestral Echoes: Babungo Masks',
     description: 'A paradise for food lovers! Sample a wide range of gourmet dishes from local and international chefs. From street food classics to fine dining tasters, there is something for every palate.',
     date: '2025-09-05T14:00:00.000Z',
     location: 'Babungo Museum',
@@ -52,7 +52,7 @@ export const mockEvents: Event[] = [
   },
   {
     id: '4',
-    title: 'Community Charity Run',
+    title: 'Baham Royal Dance Performance',
     description: 'Join us for a 5K charity run to support local community projects. It is a great way to stay active, meet new people, and make a positive impact. All ages and fitness levels are welcome.',
     date: '2025-09-20T09:00:00.000Z',
     location: 'Baham Museum',
@@ -67,7 +67,7 @@ export const mockEvents: Event[] = [
   },
   {
     id: '5',
-    title: 'Tech Innovators Conference',
+    title: 'Digital Futures at Bandjoun Station',
     description: 'A premier event for tech enthusiasts and professionals. Hear from industry leaders, discover the latest trends in technology, and network with peers. Topics include AI, blockchain, and sustainable tech.',
     date: '2025-09-30T10:00:00.000Z',
     location: 'Bandjoun Station',
@@ -83,7 +83,7 @@ export const mockEvents: Event[] = [
   },
   {
     id: '6',
-    title: 'Neighborhood Cleanup Day',
+    title: 'Reclaimed: Art from Urban Spaces',
     description: 'Let us work together to make our neighborhood a cleaner, greener place. We will provide all the necessary supplies. A great opportunity to volunteer and connect with your neighbors.',
     date: '2025-09-03T11:00:00.000Z',
     location: 'Blackitude Museum',
@@ -98,7 +98,7 @@ export const mockEvents: Event[] = [
   },
     {
     id: '7',
-    title: 'Indie Film Screening',
+    title: 'Kribi Film Festival Showcase',
     description: 'Discover the next generation of filmmakers at our indie film screening night. Featuring a selection of short films and documentaries from around the world. Q&A session with directors after the show.',
     date: '2025-09-08T20:00:00.000Z',
     location: 'doual\'art',
@@ -113,7 +113,7 @@ export const mockEvents: Event[] = [
   },
   {
     id: '8',
-    title: 'Local Farmers Market',
+    title: 'Bamenda Crafts & Textiles Fair',
     description: 'Shop fresh, locally-grown produce, artisanal cheeses, handmade crafts, and more. Support local farmers and artisans while enjoying the best of what our region has to offer.',
     date: '2025-09-02T12:00:00.000Z',
     location: 'Galerie MAM',
