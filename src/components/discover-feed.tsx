@@ -9,18 +9,14 @@ import { EventDetailsModal } from '@/components/event-details-modal';
 import { Button } from '@/components/ui/button';
 import { TrendingUp } from 'lucide-react';
 
-interface DiscoverFeedProps {
-  searchTerm?: string;
-}
-
-export function DiscoverFeed({ searchTerm = '' }: DiscoverFeedProps) {
+export function DiscoverFeed() {
   const [events, setEvents] = useState<Event[]>(mockEvents);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   const categories = useMemo(() => {
-    return [...new Set(events.map(e => e.category))];
-  }, [events]);
+    return [...new Set(mockEvents.map(e => e.category))];
+  }, []);
 
   const filteredEvents = useMemo(() => {
     let filtered = events;
@@ -30,20 +26,9 @@ export function DiscoverFeed({ searchTerm = '' }: DiscoverFeedProps) {
         activeFilters.includes(event.category)
       );
     }
-
-    if (searchTerm) {
-      const lowercasedSearchTerm = searchTerm.toLowerCase();
-      filtered = filtered.filter(event =>
-        event.title.toLowerCase().includes(lowercasedSearchTerm) ||
-        event.description.toLowerCase().includes(lowercasedSearchTerm) ||
-        event.location.toLowerCase().includes(lowercasedSearchTerm) ||
-        event.organizer.toLowerCase().includes(lowercasedSearchTerm) ||
-        event.category.toLowerCase().includes(lowercasedSearchTerm)
-      );
-    }
     
     return filtered;
-  }, [activeFilters, events, searchTerm]);
+  }, [activeFilters, events]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters(prev =>
