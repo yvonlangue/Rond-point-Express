@@ -2,14 +2,12 @@
 'use client';
 
 import { Button } from './ui/button';
-import { Calendar as CalendarIcon, DollarSign, MapPin, Accessibility } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, Accessibility } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
-import { Slider } from './ui/slider';
 import { eventCategories } from '@/lib/types';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { useState } from 'react';
 
 const accessibilityOptions = [
   'Wheelchair Access',
@@ -19,7 +17,6 @@ const accessibilityOptions = [
 ];
 
 export function FilterSidebar() {
-  const [priceRange, setPriceRange] = useState([0, 200]);
 
   return (
     <aside className="w-full md:w-1/4 lg:w-1/5">
@@ -64,20 +61,6 @@ export function FilterSidebar() {
                 <label htmlFor={category} className="ml-2 text-sm">{category}</label>
               </div>
             ))}
-          </div>
-        </div>
-
-        <div>
-          <h4 className="font-semibold mb-2 flex items-center gap-2"><DollarSign className="w-4 h-4" /> Price Range</h4>
-          <Slider
-            defaultValue={[0, 200]}
-            max={500}
-            step={10}
-            onValueChange={setPriceRange}
-          />
-          <div className="flex justify-between text-sm mt-2">
-            <span>{priceRange[0] === 0 ? 'Free' : `€${priceRange[0]}`}</span>
-            <span>€{priceRange[1]}+</span>
           </div>
         </div>
 
