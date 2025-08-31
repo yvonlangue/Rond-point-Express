@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { artTypes } from '@/lib/types';
+import { artTypes, eventCategories } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
@@ -36,6 +36,7 @@ const eventFormSchema = z.object({
   location: z.string().min(2, { message: 'Location is required.' }),
   date: z.date({ required_error: 'A date for the event is required.' }),
   artType: z.enum(artTypes, { required_error: 'Please select an art type.' }),
+  category: z.enum(eventCategories, { required_error: 'Please select a category.' }),
   organizer: z.string().min(2, { message: 'Organizer name is required.' }),
   price: z.coerce.number().optional(),
 });
@@ -139,7 +140,22 @@ export function EventForm() {
               </FormItem>
             )}
           />
-          <FormField
+           <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Central Park" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <FormField
             control={form.control}
             name="artType"
             render={({ field }) => (
@@ -163,21 +179,32 @@ export function EventForm() {
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
-            name="location"
+            name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Location</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Central Park" {...field} />
-                </FormControl>
+                <FormLabel>Category</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {eventCategories.map(category => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="organizer"
@@ -191,20 +218,20 @@ export function EventForm() {
               </FormItem>
             )}
           />
+           <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price (€) - Optional</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="Enter 0 for a free event" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
         </div>
-         <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price (€) - Optional</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="Enter 0 for a free event" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'Submitting...' : 'Create Event'}
