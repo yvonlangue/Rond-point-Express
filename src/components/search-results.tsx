@@ -1,9 +1,6 @@
-
 'use client';
 
 import { Suspense, useState, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { mockEvents } from '@/lib/events';
 import type { Event } from '@/lib/types';
 import { EventCard } from './event-card';
 import { EventDetailsModal } from './event-details-modal';
@@ -12,24 +9,14 @@ import { Button } from './ui/button';
 import { List, LayoutGrid, SlidersHorizontal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
-function SearchResultsContent() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get('q') || '';
-  
+interface SearchResultsProps {
+  events: Event[];
+  searchTerm: string;
+}
+
+function SearchResultsContent({ events, searchTerm }: SearchResultsProps) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
-  const filteredEvents = useMemo(() => {
-    let events = mockEvents;
-    if (query) {
-      events = events.filter(event =>
-        event.title.toLowerCase().includes(query.toLowerCase()) ||
-        event.description.toLowerCase().includes(query.toLowerCase()) ||
-        event.category.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-    return events;
-  }, [query]);
 
   const handleOpenModal = (event: Event) => {
     setSelectedEvent(event);
@@ -46,7 +33,8 @@ function SearchResultsContent() {
         <main className="w-full">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-medium">
-              {filteredEvents.length} event{filteredEvents.length !== 1 && 's'} found for "{query}"
+              {events.length} event{events.length !== 1 && 's'} found
+              {searchTerm && ` for "${searchTerm}"`}
             </h2>
             <div className="flex items-center gap-2">
               <Button variant="outline" className="hidden md:inline-flex">
@@ -68,15 +56,14 @@ function SearchResultsContent() {
                 <SelectContent>
                   <SelectItem value="date">Sort by Date</SelectItem>
                   <SelectItem value="relevance">Sort by Relevance</SelectItem>
-                  <SelectItem value="price">Sort by Price</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
-          {filteredEvents.length > 0 ? (
+          {events.length > 0 ? (
             <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-              {filteredEvents.map(event => (
+              {events.map(event => (
                 <EventCard key={event.id} event={event} onOpenModal={handleOpenModal} />
               ))}
             </div>
@@ -99,10 +86,10 @@ function SearchResultsContent() {
   );
 }
 
-export function SearchResults() {
+export function SearchResults({ events, searchTerm }: SearchResultsProps) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <SearchResultsContent />
+      <SearchResultsContent events={events} searchTerm={searchTerm} />
     </Suspense>
   )
 }

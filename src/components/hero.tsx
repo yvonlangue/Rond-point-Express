@@ -1,18 +1,18 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
-export function Hero() {
+interface HeroProps {
+  onSearch: (term: string) => void;
+}
+
+export function Hero({ onSearch }: HeroProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
 
   const handleSearch = () => {
-    if (searchTerm.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-    }
+    onSearch(searchTerm.trim());
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
