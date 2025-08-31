@@ -47,16 +47,21 @@ export default function PremiumPage() {
                     </CardFooter>
                 </Card>
                 
-                <div className="space-y-6 p-4">
-                    <h3 className="text-2xl font-bold">Payment Information</h3>
+                <div className="space-y-6 p-4 bg-muted/30 rounded-lg">
+                    <h3 className="text-2xl font-bold">Secure Mobile Payment</h3>
                     <p className="text-muted-foreground">
                         We partner with trusted local payment providers for secure transactions.
-                        You can pay using Orange Money or MTN Mobile Money.
+                        You can pay using your favorite mobile money service.
                     </p>
-                    <div className="flex items-center gap-4">
-                        {/* Placeholder for Mobile Money logos */}
-                        <div className="w-24 h-12 bg-muted rounded-md flex items-center justify-center font-bold">Orange</div>
-                        <div className="w-24 h-12 bg-muted rounded-md flex items-center justify-center font-bold">MTN</div>
+                    <div className="flex items-center gap-4 py-4">
+                        <div className="flex-1 text-center p-4 bg-card border rounded-lg">
+                            <span className="text-2xl font-bold text-orange-500">Orange</span>
+                            <p className="font-semibold">Money</p>
+                        </div>
+                        <div className="flex-1 text-center p-4 bg-card border rounded-lg">
+                            <span className="text-2xl font-bold text-yellow-500">MTN</span>
+                            <p className="font-semibold">Mobile Money</p>
+                        </div>
                     </div>
                      <p className="text-sm text-muted-foreground pt-4">
                         By clicking "Upgrade Now", you agree to our Terms of Service and Privacy Policy.

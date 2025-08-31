@@ -5,11 +5,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import type { Event } from '@/lib/types';
-import { Calendar, MapPin, User } from 'lucide-react';
+import { Calendar, MapPin, User, Ticket } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { Button } from './ui/button';
+import Link from 'next/link';
 
 interface EventDetailsModalProps {
   event: Event;
@@ -63,6 +66,28 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             {event.description}
           </p>
         </div>
+        {event.price && event.price > 0 && (
+          <DialogFooter className="p-6 pt-0 border-t mt-2">
+             <div className='w-full flex flex-col gap-2'>
+                {event.ticketUrl ? (
+                    <Button asChild size="lg" className='w-full'>
+                        <Link href={event.ticketUrl} target="_blank">
+                            <Ticket className="mr-2 h-5 w-5" />
+                            Buy Ticket
+                        </Link>
+                    </Button>
+                ) : (
+                    <Button size="lg" className='w-full' disabled>
+                       <Ticket className="mr-2 h-5 w-5" />
+                       Ticketing Not Available
+                    </Button>
+                )}
+                <p className='text-xs text-center text-muted-foreground'>
+                  Secure payment via Orange Money or MTN Mobile Money.
+                </p>
+            </div>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

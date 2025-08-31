@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,10 +36,12 @@ const eventFormSchema = z.object({
   description: z.string().min(10, { message: 'Description must be at least 10 characters.' }),
   location: z.string().min(2, { message: 'Location is required.' }),
   date: z.date({ required_error: 'A date for the event is required.' }),
+  time: z.string().min(1, { message: 'Time is required.' }),
   artType: z.enum(artTypes, { required_error: 'Please select an art type.' }),
   category: z.enum(eventCategories, { required_error: 'Please select a category.' }),
   organizer: z.string().min(2, { message: 'Organizer name is required.' }),
   price: z.coerce.number().optional(),
+  ticketUrl: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
@@ -54,14 +57,24 @@ export function EventForm() {
       description: '',
       location: '',
       organizer: '',
+      time: '19:00',
     },
   });
 
   function onSubmit(data: EventFormValues) {
     setIsSubmitting(true);
-    // Simulate API call
+    // Combine date and time
+    const [hours, minutes] = data.time.split(':');
+    const combinedDate = new Date(data.date);
+    combinedDate.setHours(parseInt(hours), parseInt(minutes));
+
+    const finalData = {
+      ...data,
+      date: combinedDate.toISOString(),
+    };
+
     setTimeout(() => {
-      console.log('Form submitted:', data);
+      console.log('Form submitted:', finalData);
       toast({
         title: 'Event Created!',
         description: `Your event "${data.title}" has been successfully submitted.`,
@@ -81,7 +94,7 @@ export function EventForm() {
             <FormItem>
               <FormLabel>Event Title</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Summer Music Festival" {...field} />
+                <Input placeholder="e.g., Douala Art Fair" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,12 +117,12 @@ export function EventForm() {
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem className="flex flex-col md:col-span-2">
                 <FormLabel>Event Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -142,18 +155,31 @@ export function EventForm() {
           />
            <FormField
             control={form.control}
-            name="location"
+            name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Location</FormLabel>
+                <FormLabel>Time</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Central Park" {...field} />
+                  <Input type="time" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+        <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Bandjoun Station" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
          <FormField
             control={form.control}
@@ -232,6 +258,19 @@ export function EventForm() {
               )}
             />
         </div>
+         <FormField
+              control={form.control}
+              name="ticketUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ticket URL - Optional</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://your-ticketing-site.com/event" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
         <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? 'Submitting...' : 'Create Event'}
