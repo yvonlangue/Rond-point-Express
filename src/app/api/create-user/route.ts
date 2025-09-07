@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-server'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create user using admin client (bypasses RLS)
-    const { data, error } = await supabaseAdmin
+    // Create user using regular client
+    const { data, error } = await supabase
       .from('users')
       .insert([{
         clerk_id,
