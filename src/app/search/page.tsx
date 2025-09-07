@@ -75,7 +75,7 @@ function SearchPageContent() {
     category?: string;
     location?: string;
     artType?: string;
-    price?: 'free' | 'paid' | string;
+    price?: 'free' | 'paid';
     featured?: boolean;
     dateFrom?: string;
     dateTo?: string;
@@ -92,7 +92,7 @@ function SearchPageContent() {
       
       if (query) searchParams.search = query;
       if (category) searchParams.category = category;
-      if (price) searchParams.price = price;
+      if (price === 'free' || price === 'paid') searchParams.price = price;
       if (featured === 'true') searchParams.featured = true;
       
       // Handle location - prioritize filter over URL parameter
