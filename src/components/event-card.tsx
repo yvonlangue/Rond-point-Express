@@ -13,13 +13,20 @@ interface EventCardProps {
 
 export function EventCard({ event, onOpenModal }: EventCardProps) {
   const formattedDate = format(parseISO(event.date), "eeee, MMMM d, yyyy • HH:mm");
+  
+  // Get the first image or use a default
+  const imageUrl = event.images && event.images.length > 0 
+    ? event.images[0] 
+    : 'https://picsum.photos/600/400';
+
+  console.log('EventCard - Event:', event.title, 'Images:', event.images, 'Using URL:', imageUrl);
 
   return (
     <Card
       className="flex flex-col overflow-hidden cursor-pointer group border relative"
       onClick={() => onOpenModal(event)}
     >
-      {event.isFeatured && (
+      {event.featured && (
          <Badge variant="default" className="absolute top-2 right-2 z-10">
           <Star className="w-3 h-3 mr-1" />
           Featured
@@ -27,7 +34,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
       )}
       <div className="overflow-hidden">
         <Image
-          src={event.images[0]}
+          src={imageUrl}
           alt={event.title}
           width={400}
           height={250}
@@ -38,7 +45,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
 
       <CardContent className="p-4 flex-grow flex flex-col">
         <div className="flex justify-between items-start mb-2">
-          <p className="text-sm">{event.artType}</p>
+          <p className="text-sm">{event.art_type}</p>
           <p className="text-sm font-medium">
             {event.price ? `${event.price.toLocaleString()} XAF` : 'Free'}
           </p>
@@ -50,7 +57,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
         <div className="text-sm space-y-1">
           <p className="font-bold">{formattedDate}</p>
           <p>{event.location}</p>
-          <p>Organized by {event.organizer}</p>
+          <p>Organized by {event.organizer.name}</p>
         </div>
       </CardContent>
     </Card>

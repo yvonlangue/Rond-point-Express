@@ -1,6 +1,6 @@
 # Rond-point Express 🎨
 
-A comprehensive art event discovery and management platform for Cameroon's cultural scene. Built with Next.js 15, MongoDB, Firebase Auth, and mobile money integration.
+A comprehensive art event discovery and management platform for Cameroon's cultural scene. Built with Next.js 15, Supabase, Clerk Auth, and mobile money integration.
 
 ## ✨ Features
 
@@ -19,8 +19,8 @@ A comprehensive art event discovery and management platform for Cameroon's cultu
 
 ### 🔧 Technical Stack
 - **Frontend**: Next.js 15, React 18, TypeScript, Tailwind CSS
-- **Backend**: Node.js, Express, MongoDB, Mongoose
-- **Authentication**: Firebase Auth with role-based access
+- **Backend**: Node.js, Express, Supabase (PostgreSQL)
+- **Authentication**: Clerk Auth with role-based access
 - **Payments**: Mobile money APIs (MTN/Orange)
 - **UI Components**: shadcn/ui with custom design system
 
@@ -28,8 +28,8 @@ A comprehensive art event discovery and management platform for Cameroon's cultu
 
 ### Prerequisites
 - Node.js 18+ 
-- MongoDB (local or Atlas)
-- Firebase project
+- Supabase account
+- Clerk account
 - Git
 
 ### 1. Clone and Install
@@ -44,185 +44,102 @@ Create a `.env.local` file in the root directory:
 
 ```env
 # Frontend Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your-firebase-api-key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-clerk-publishable-key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
 # Backend Configuration
-API_PORT=3001
-FRONTEND_URL=http://localhost:9002
-NODE_ENV=development
-
-# Database Configuration
-MONGODB_URI=mongodb://localhost:27017/rond-point-express
-
-# Firebase Admin Configuration
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=your-service-account-email@your-project.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYour private key here\n-----END PRIVATE KEY-----"
+PORT=3001
 ```
 
 ### 3. Database Setup
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Run the SQL schema from `docs/schema.sql`
+3. Set up Row Level Security policies
+4. Create storage bucket for event images
+
+### 4. Authentication Setup
+1. Create a Clerk account at [clerk.com](https://clerk.com)
+2. Create a new application
+3. Copy your publishable key and add it to `.env.local`
+4. Configure sign-in/sign-up URLs
+
+### 5. Create Admin User
+1. Sign up for a new account
+2. In Clerk Dashboard > Users, find your user
+3. Add `role: "admin"` to public metadata
+4. Refresh the app - "Admin" button should appear
+
+### 6. Run Development Server
 ```bash
-# Start MongoDB (if using local)
-mongod
-
-# Or use MongoDB Atlas (cloud)
-# Update MONGODB_URI in .env.local
+npm run dev
 ```
 
-### 4. Run Development Servers
-```bash
-# Run both frontend and backend
-npm run dev:full
+Visit `http://localhost:9002` to see the application.
 
-# Or run separately
-npm run dev          # Frontend (port 9002)
-npm run dev:api      # Backend (port 3001)
-```
+## 📱 Mobile Money Integration
 
-### 5. Access the Application
-- **Frontend**: http://localhost:9002
-- **Backend API**: http://localhost:3001
-- **API Health Check**: http://localhost:3001/health
+The platform supports mobile money payments through:
+- **MTN Mobile Money**: Integration with MTN Cameroon API
+- **Orange Money**: Integration with Orange Cameroon API
 
-## 📁 Project Structure
+## 🎨 Customization
 
-```
-src/
-├── api/                    # Backend API
-│   ├── config/            # Database configuration
-│   ├── middleware/        # Auth and admin middleware
-│   ├── models/            # MongoDB schemas
-│   ├── routes/            # API endpoints
-│   └── server.ts          # Express server
-├── app/                   # Next.js app router
-│   ├── admin/             # Admin dashboard
-│   ├── create-event/      # Event creation
-│   ├── premium/           # Premium upgrade
-│   ├── profile/           # User dashboard
-│   └── search/            # Event search
-├── components/            # React components
-│   ├── ui/                # shadcn/ui components
-│   └── ...                # Custom components
-├── hooks/                 # Custom React hooks
-├── lib/                   # Utilities and types
-└── ...
-```
+### Branding
+- Update colors in `tailwind.config.ts`
+- Replace logo in `src/components/header.tsx`
+- Modify favicon in `src/app/favicon.svg`
 
-## 🔐 Authentication Setup
+### Styling
+- Custom CSS in `src/app/globals.css`
+- Component styles using Tailwind classes
+- Responsive design breakpoints
 
-### 1. Firebase Project Setup
-1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
-2. Enable Authentication with Google provider
-3. Create a web app and copy configuration
-4. Generate service account key for backend
+## 📊 Admin Features
 
-### 2. Create Admin User
-```javascript
-// In Firebase Console > Authentication
-// Add a user with email and password
-// Then manually update their role in MongoDB:
-
-db.users.updateOne(
-  { email: "admin@example.com" },
-  { $set: { role: "admin" } }
-)
-```
-
-## 💳 Payment Integration
-
-### Mobile Money Setup
-The platform supports MTN Mobile Money and Orange Money:
-
-```javascript
-// Example payment flow
-const payment = await fetch('/api/payments/initiate', {
-  method: 'POST',
-  headers: { 'Authorization': `Bearer ${token}` },
-  body: JSON.stringify({
-    amount: 25000,
-    paymentMethod: 'mtn',
-    phoneNumber: '+237612345678',
-    description: 'Premium Subscription'
-  })
-});
-```
-
-## 🎨 Design System
-
-### Colors
-- **Primary**: Burnt Orange (#E47833)
-- **Background**: Off-white (#FAFAFA)
-- **Accent**: Deep Green (#4B5320)
-
-### Fonts
-- **Headlines**: Poppins (sans-serif)
-- **Body**: PT Sans (sans-serif)
-
-## 📊 API Endpoints
-
-### Public Endpoints
-- `GET /api/events` - Get public events
-- `GET /api/events/featured` - Get featured events
-- `GET /api/events/:id` - Get single event
-
-### Authenticated Endpoints
-- `POST /api/events` - Create event
-- `PUT /api/events/:id` - Update event
-- `DELETE /api/events/:id` - Delete event
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update profile
-- `POST /api/users/upgrade` - Upgrade to premium
-
-### Admin Endpoints
-- `GET /api/admin/dashboard` - Admin dashboard stats
-- `GET /api/admin/events` - Get events for moderation
-- `POST /api/admin/events/:id/approve` - Approve event
-- `POST /api/admin/events/:id/reject` - Reject event
-- `GET /api/admin/users` - Get users for management
+- **Event Approval**: Review and approve pending events
+- **User Management**: View user statistics and activity
+- **Analytics Dashboard**: Track platform usage and engagement
 
 ## 🚀 Deployment
 
 ### Frontend (Vercel)
-```bash
-npm run build
-# Deploy to Vercel with environment variables
-```
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-### Backend (Railway/Render)
-```bash
-# Set environment variables
-# Deploy Express server
-```
-
-### Database (MongoDB Atlas)
-1. Create MongoDB Atlas cluster
-2. Update `MONGODB_URI` in environment
-3. Configure network access
+### Database (Supabase)
+1. Create production Supabase project
+2. Run database migrations
+3. Update environment variables
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📝 License
+## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-For support and questions:
-- Create an issue in the repository
-- Check the documentation
-- Review the API endpoints
+- Built with [Next.js](https://nextjs.org/)
+- Database powered by [Supabase](https://supabase.com/)
+- Authentication by [Clerk](https://clerk.com/)
+- UI components from [shadcn/ui](https://ui.shadcn.com/)
+- Icons by [Lucide](https://lucide.dev/)
 
 ---
 
-**Built with ❤️ for Cameroon's art community**
+**Rond-point Express** - Connecting Cameroon's art community, one event at a time! 🎭✨

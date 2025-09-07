@@ -1,0 +1,20 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle representing rond point -->
+  <circle cx="16" cy="16" r="14" stroke="#3B82F6" stroke-width="2" fill="#EFF6FF"/>
+  
+  <!-- Inner circle -->
+  <circle cx="16" cy="16" r="8" stroke="#1D4ED8" stroke-width="1.5" fill="#DBEAFE"/>
+  
+  <!-- Center point -->
+  <circle cx="16" cy="16" r="2" fill="#1E40AF"/>
+  
+  <!-- Artistic elements - curved lines representing express/movement -->
+  <path d="M8 16 Q16 8 24 16" stroke="#F59E0B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M24 16 Q16 24 8 16" stroke="#F59E0B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Small decorative dots -->
+  <circle cx="16" cy="6" r="1" fill="#3B82F6"/>
+  <circle cx="26" cy="16" r="1" fill="#3B82F6"/>
+  <circle cx="16" cy="26" r="1" fill="#3B82F6"/>
+  <circle cx="6" cy="16" r="1" fill="#3B82F6"/>
+</svg>

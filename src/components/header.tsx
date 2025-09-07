@@ -2,11 +2,16 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CircleDot, Shield } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
+import { CircleDot, Shield, LogOut } from 'lucide-react';
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, useUser, useClerk } from '@clerk/nextjs';
 
 export function Header() {
-  const { user, signOutUser, loading } = useAuth();
+  const { user } = useUser();
+  const { signOut } = useClerk();
+
+  const handleSignOut = () => {
+    signOut();
+  };
 
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center bg-background border-b sticky top-0 z-50">
@@ -31,34 +36,47 @@ export function Header() {
       </nav>
 
       <div className="flex items-center gap-4 ml-auto">
-        {loading ? null : user ? (
-          <>
-            {user.role === 'admin' && (
-              <Button variant="ghost" asChild size="sm">
-                <Link href="/admin" className="flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  Admin
-                </Link>
-              </Button>
-            )}
-            <Button variant="ghost" asChild>
-              <Link href="/profile">Dashboard</Link>
+        <SignedOut>
+          <SignInButton mode="modal">
+            <Button variant="ghost">Sign In</Button>
+          </SignInButton>
+          <SignUpButton mode="modal">
+            <Button>Join Now</Button>
+          </SignUpButton>
+        </SignedOut>
+        
+        <SignedIn>
+          {user?.publicMetadata?.role === 'admin' && (
+            <Button variant="ghost" asChild size="sm">
+              <Link href="/admin" className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                Admin
+              </Link>
             </Button>
-            <Button variant="ghost" asChild>
-              <Link href="/create-event">Create Event</Link>
-            </Button>
-            <Button onClick={signOutUser} variant="outline">Sign Out</Button>
-          </>
-        ) : (
-          <>
-            <Button variant="ghost" asChild>
-              <Link href="/profile">Sign In</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/profile">Join Now</Link>
-            </Button>
-          </>
-        )}
+          )}
+          <Button variant="ghost" asChild>
+            <Link href="/profile">Dashboard</Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link href="/create-event">Create Event</Link>
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={handleSignOut}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </Button>
+          <UserButton 
+            appearance={{
+              elements: {
+                avatarBox: "w-8 h-8"
+              }
+            }}
+          />
+        </SignedIn>
       </div>
     </header>
   );

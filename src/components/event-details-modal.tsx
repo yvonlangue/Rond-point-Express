@@ -22,13 +22,20 @@ interface EventDetailsModalProps {
 
 export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalProps) {
   const formattedDate = format(parseISO(event.date), "eeee, MMMM d, yyyy • HH:mm");
+  
+  // Get the first image or use a default
+  const imageUrl = event.images && event.images.length > 0 
+    ? event.images[0] 
+    : 'https://picsum.photos/600/400';
+
+  console.log('EventDetailsModal - Event:', event.title, 'Images:', event.images, 'Using URL:', imageUrl);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl p-0 gap-0">
         <div className="relative">
           <Image
-            src={event.images[0]}
+            src={imageUrl}
             alt={event.title}
             width={600}
             height={300}
@@ -40,7 +47,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
           <div className="flex justify-between items-start">
             <DialogTitle className="font-bold text-3xl pr-4">{event.title}</DialogTitle>
             <div className='flex flex-col items-end gap-2'>
-              <Badge variant="outline">{event.artType}</Badge>
+              <Badge variant="outline">{event.art_type}</Badge>
               <p className="text-lg font-bold">
                 {event.price ? `${event.price.toLocaleString()} XAF` : 'Free'}
               </p>
@@ -57,7 +64,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             </div>
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
-              <span>Organized by {event.organizer}</span>
+              <span>Organized by {event.organizer.name}</span>
             </div>
           </div>
         </DialogHeader>

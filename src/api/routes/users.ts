@@ -8,7 +8,7 @@ const router = express.Router();
 // GET /api/users/profile - Get current user profile
 router.get('/profile', async (req: AuthenticatedRequest, res) => {
   try {
-    const user = await User.findById(req.user!._id).select('-firebaseUid');
+    const user = await User.findById(req.user!._id);
     
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -37,7 +37,7 @@ router.put('/profile', async (req: AuthenticatedRequest, res) => {
       req.user!._id,
       updateData,
       { new: true, runValidators: true }
-    ).select('-firebaseUid');
+    );
 
     res.json({ user: updatedUser });
   } catch (error) {
@@ -189,38 +189,6 @@ router.post('/cancel-premium', async (req: AuthenticatedRequest, res) => {
   } catch (error) {
     console.error('Cancel premium error:', error);
     res.status(500).json({ error: 'Failed to cancel premium' });
-  }
-});
-
-// POST /api/users/register - Create user profile after Firebase auth
-router.post('/register', async (req: AuthenticatedRequest, res) => {
-  try {
-    const { name, email, role = 'organizer' } = req.body;
-    
-    if (!req.firebaseUser) {
-      return res.status(401).json({ error: 'Firebase authentication required' });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ firebaseUid: req.firebaseUser.uid });
-    if (existingUser) {
-      return res.status(400).json({ error: 'User profile already exists' });
-    }
-
-    // Create new user
-    const user = new User({
-      firebaseUid: req.firebaseUser.uid,
-      email: email || req.firebaseUser.email,
-      name,
-      role
-    });
-
-    await user.save();
-
-    res.status(201).json({ user });
-  } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({ error: 'Failed to create user profile' });
   }
 });
 

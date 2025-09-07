@@ -29,7 +29,12 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { artTypes, eventCategories } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { eventsApi } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
+import { ImageUpload } from '@/components/image-upload';
+import { uploadMultipleImagesToSupabase } from '@/lib/image-upload';
 
 const eventFormSchema = z.object({
   title: z.string().min(3, { message: 'Title must be at least 3 characters.' }),
@@ -46,9 +51,14 @@ const eventFormSchema = z.object({
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
-export function EventForm() {
+export function EventForm({ editId }: { editId?: string | null }) {
   const { toast } = useToast();
+  const router = useRouter();
+  const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -56,37 +66,173 @@ export function EventForm() {
       title: '',
       description: '',
       location: '',
-      organizer: '',
+      date: undefined,
       time: '19:00',
+      artType: undefined,
+      category: undefined,
+      organizer: '',
+      price: 0,
+      ticketUrl: '',
     },
   });
 
-  function onSubmit(data: EventFormValues) {
-    setIsSubmitting(true);
-    // Combine date and time
-    const [hours, minutes] = data.time.split(':');
-    const combinedDate = new Date(data.date);
-    combinedDate.setHours(parseInt(hours), parseInt(minutes));
+  // Load event data when in edit mode
+  useEffect(() => {
+    if (editId && user) {
+      loadEventData();
+    }
+  }, [editId, user]);
 
-    const finalData = {
-      ...data,
-      date: combinedDate.toISOString(),
-    };
+  const handleDeleteExistingImage = (imageUrl: string) => {
+    setExistingImages(prev => prev.filter(url => url !== imageUrl));
+  };
 
-    setTimeout(() => {
-      console.log('Form submitted:', finalData);
+  const handleReplaceExistingImage = (oldImageUrl: string, newFile: File) => {
+    // Remove old image and add new file to upload queue
+    setExistingImages(prev => prev.filter(url => url !== oldImageUrl));
+    setUploadedImages(prev => [...prev, newFile]);
+  };
+
+  const loadEventData = async () => {
+    if (!editId) return;
+    
+    setIsLoading(true);
+    try {
+      const response = await eventsApi.getById(editId);
+      if (response.data?.event) {
+        const event = response.data.event;
+        const eventDate = new Date(event.date);
+        
+        form.reset({
+          title: event.title,
+          description: event.description,
+          location: event.location,
+          date: eventDate,
+          time: eventDate.toTimeString().slice(0, 5), // HH:MM format
+          artType: event.art_type,
+          category: event.category,
+          organizer: event.organizer?.name || '',
+          price: event.price || 0,
+          ticketUrl: event.ticket_url || '',
+        });
+
+        // Handle existing images - convert URLs back to File objects for display
+        if (event.images && event.images.length > 0) {
+          console.log('Loading existing images for edit:', event.images);
+          setExistingImages(event.images);
+        } else {
+          setExistingImages([]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading event:', error);
       toast({
-        title: 'Event Created!',
-        description: `Your event "${data.title}" has been successfully submitted.`,
+        title: 'Error',
+        description: 'Failed to load event data',
+        variant: 'destructive',
       });
-      form.reset();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  async function onSubmit(data: EventFormValues) {
+    setIsSubmitting(true);
+    
+    try {
+      // Upload images first
+      let imageUrls: string[] = [];
+      
+      // Keep existing images when editing
+      if (editId && existingImages.length > 0) {
+        imageUrls = [...existingImages];
+        console.log('Preserving existing images:', existingImages);
+      }
+      
+      // Add new uploaded images
+      if (uploadedImages.length > 0) {
+        try {
+          const uploadedUrls = await uploadMultipleImagesToSupabase(uploadedImages, user!.id);
+          imageUrls = [...imageUrls, ...uploadedUrls];
+          console.log('Added new images:', uploadedUrls);
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+          toast({
+            title: 'Image Upload Failed',
+            description: 'Some images failed to upload. Please try again or continue without images.',
+            variant: 'destructive',
+          });
+          // Continue with existing images only
+        }
+      }
+      
+      // If no images at all, don't use placeholder - let it be empty
+      // if (imageUrls.length === 0) {
+      //   imageUrls = ['https://picsum.photos/600/400'];
+      // }
+
+      // Combine date and time
+      const [hours, minutes] = data.time.split(':');
+      const combinedDate = new Date(data.date);
+      combinedDate.setHours(parseInt(hours), parseInt(minutes));
+
+      const eventData = {
+        title: data.title,
+        description: data.description,
+        location: data.location,
+        date: combinedDate.toISOString(),
+        art_type: data.artType,  // Changed from artType to art_type
+        category: data.category,
+        organizer: {
+          name: data.organizer,
+          email: user?.emailAddresses[0]?.emailAddress || '',
+        },
+        price: data.price || 0,
+        ticket_url: data.ticketUrl || undefined,  // Changed from ticketUrl to ticket_url
+        images: imageUrls, // Use combined existing + new images
+      };
+
+      const response = editId 
+        ? await eventsApi.update(editId, eventData)
+        : await eventsApi.create(eventData, user!.id);
+
+      if (response.error) {
+        toast({
+          title: 'Error',
+          description: response.error,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: editId ? 'Event Updated!' : 'Event Created!',
+          description: editId 
+            ? `Your event "${data.title}" has been successfully updated.`
+            : `Your event "${data.title}" has been successfully submitted for review.`,
+        });
+        form.reset();
+        router.push('/profile');
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create event. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2">Loading event data...</span>
+        </div>
+      ) : (
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="title"
@@ -187,7 +333,7 @@ export function EventForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Art Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select an art type" />
@@ -211,7 +357,7 @@ export function EventForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
@@ -271,11 +417,25 @@ export function EventForm() {
                 </FormItem>
               )}
             />
-        <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Event Images - Optional</label>
+          <ImageUpload
+            images={uploadedImages}
+            onImagesChange={setUploadedImages}
+            maxImages={5}
+            minSizeKB={100}
+            maxSizeKB={2500}
+            existingImages={existingImages}
+            onDeleteExistingImage={handleDeleteExistingImage}
+            onReplaceExistingImage={handleReplaceExistingImage}
+          />
+        </div>
+        <Button type="submit" className="w-full" size="lg" disabled={isSubmitting || isLoading}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isSubmitting ? 'Submitting...' : 'Create Event'}
+          {isSubmitting ? (editId ? 'Updating Event...' : 'Creating Event...') : (editId ? 'Update Event' : 'Create Event')}
         </Button>
       </form>
+      )}
     </Form>
   );
 }

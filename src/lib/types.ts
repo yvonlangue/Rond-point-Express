@@ -62,16 +62,21 @@ export type Event = {
   description: string;
   date: string; // ISO 8601
   location: string;
-  artType: ArtType;
+  art_type: ArtType; // Changed from artType to art_type
   category: EventCategory;
   images: string[]; // Array of image URLs
-  organizerId: string; // Foreign key to User/OrganizerProfile
-  organizer: string; // Denormalized organizer name for display
-  isFeatured?: boolean; // For premium organizers
+  organizer: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
+  status: 'pending' | 'approved' | 'rejected';
   price?: number;
-  ticketUrl?: string; // Optional for integrated ticketing
-  createdAt: string; // ISO 8601
-  updatedAt: string; // ISO 8601
+  ticket_url?: string; // Changed from ticketUrl to ticket_url
+  featured?: boolean; // Changed from isFeatured to featured
+  created_by: string; // Changed from organizerId to created_by
+  created_at: string; // Changed from createdAt to created_at
+  updated_at: string; // Changed from updatedAt to updated_at
 };
 
 // Premium Subscription Model

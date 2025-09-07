@@ -1,28 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
-import admin from 'firebase-admin';
-import { User } from '../models/User';
 
-// Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
-    })
-  });
-}
+// Mock authentication middleware for development
+// In production, this would verify Clerk JWT tokens
 
 export interface AuthenticatedRequest extends Request {
-  user?: any;
-  firebaseUser?: admin.auth.DecodedIdToken;
+  user?: {
+    _id: string;
+    email: string;
+    name: string;
+    role: string;
+    isPremium: boolean;
+    eventCount: number;
+  };
 }
 
-export const authMiddleware = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const authMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     
@@ -35,39 +27,27 @@ export const authMiddleware = async (
 
     const token = authHeader.split('Bearer ')[1];
     
-    // Verify Firebase token
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.firebaseUser = decodedToken;
-
-    // Get user from database
-    const user = await User.findOne({ firebaseUid: decodedToken.uid });
-    
-    if (!user) {
-      return res.status(404).json({ 
-        error: 'User not found',
-        message: 'User profile not found in database' 
-      });
+    // Mock token verification for development
+    // In production, verify Clerk JWT token here
+    if (token === 'mock-token') {
+      req.user = {
+        _id: 'mock-user-id',
+        email: 'user@example.com',
+        name: 'Mock User',
+        role: 'organizer',
+        isPremium: false,
+        eventCount: 0,
+      };
+      return next();
     }
 
-    req.user = user;
-    next();
+    // For now, reject all other tokens
+    return res.status(401).json({ 
+      error: 'Authentication failed',
+      message: 'Invalid authentication token' 
+    });
   } catch (error) {
     console.error('Auth middleware error:', error);
-    
-    if (error instanceof Error && error.message.includes('auth/id-token-expired')) {
-      return res.status(401).json({ 
-        error: 'Token expired',
-        message: 'Authentication token has expired' 
-      });
-    }
-    
-    if (error instanceof Error && error.message.includes('auth/id-token-revoked')) {
-      return res.status(401).json({ 
-        error: 'Token revoked',
-        message: 'Authentication token has been revoked' 
-      });
-    }
-
     return res.status(401).json({ 
       error: 'Authentication failed',
       message: 'Invalid authentication token' 
@@ -76,11 +56,7 @@ export const authMiddleware = async (
 };
 
 // Optional auth middleware for routes that can work with or without authentication
-export const optionalAuthMiddleware = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const optionalAuthMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
     
@@ -90,18 +66,46 @@ export const optionalAuthMiddleware = async (
 
     const token = authHeader.split('Bearer ')[1];
     
-    // Verify Firebase token
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.firebaseUser = decodedToken;
+    // Mock token verification for development
+    if (token === 'mock-token') {
+      req.user = {
+        _id: 'mock-user-id',
+        email: 'user@example.com',
+        name: 'Mock User',
+        role: 'organizer',
+        isPremium: false,
+        eventCount: 0,
+      };
+    }
 
-    // Get user from database
-    const user = await User.findOne({ firebaseUid: decodedToken.uid });
-    req.user = user;
-    
-    next();
+    return next();
   } catch (error) {
     // Continue without user if auth fails
     console.warn('Optional auth failed:', error);
     next();
   }
+};
+
+export const adminMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+
+  next();
+};
+
+export const premiumMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  if (!req.user.isPremium) {
+    return res.status(403).json({ error: 'Premium subscription required' });
+  }
+
+  next();
 };
