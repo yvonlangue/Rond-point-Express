@@ -11,12 +11,20 @@ import { List, LayoutGrid, SlidersHorizontal, RefreshCw, AlertCircle, Search } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+interface FiltersPayload {
+  dateFrom?: Date;
+  dateTo?: Date;
+  artTypes?: string[];
+  location?: string;
+  accessibility?: string[];
+}
+
 interface SearchResultsProps {
   events: Event[];
   loading?: boolean;
   error?: string | null;
   onRefresh?: () => void;
-  onSearch?: (filters: any) => void;
+  onSearch?: (filters: FiltersPayload) => void;
 }
 
 export function SearchResults({ events, loading = false, error, onRefresh, onSearch }: SearchResultsProps) {
@@ -29,14 +37,14 @@ export function SearchResults({ events, loading = false, error, onRefresh, onSea
   const [showFilters, setShowFilters] = useState(false);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
-  const handleFiltersChange = (filters: any) => {
+  const handleFiltersChange = (filters: FiltersPayload) => {
     // Check if any filters are active
     const isActive = !!(
-      filters.dateFrom || 
-      filters.dateTo || 
-      filters.artTypes?.length > 0 || 
-      filters.location || 
-      filters.accessibility?.length > 0
+      filters.dateFrom ||
+      filters.dateTo ||
+      (Array.isArray(filters.artTypes) && filters.artTypes.length > 0) ||
+      filters.location ||
+      (Array.isArray(filters.accessibility) && filters.accessibility.length > 0)
     );
     setHasActiveFilters(isActive);
   };
