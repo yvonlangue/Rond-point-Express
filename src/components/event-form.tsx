@@ -46,7 +46,7 @@ const eventFormSchema = z.object({
   category: z.enum(eventCategories, { required_error: 'Please select a category.' }),
   organizer: z.string().min(2, { message: 'Organizer name is required.' }),
   price: z.coerce.number().optional(),
-  ticketUrl: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
+  ticket_url: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
@@ -72,7 +72,7 @@ export function EventForm({ editId }: { editId?: string | null }) {
       category: undefined,
       organizer: '',
       price: 0,
-      ticketUrl: '',
+      ticket_url: '',
     },
   });
 
@@ -113,7 +113,7 @@ export function EventForm({ editId }: { editId?: string | null }) {
           category: event.category,
           organizer: event.organizer?.name || '',
           price: event.price || 0,
-          ticketUrl: event.ticket_url || '',
+          ticket_url: event.ticket_url || '',
         });
 
         // Handle existing images - convert URLs back to File objects for display
@@ -188,7 +188,7 @@ export function EventForm({ editId }: { editId?: string | null }) {
           email: user?.emailAddresses[0]?.emailAddress || '',
         },
         price: data.price || 0,
-        ticket_url: data.ticketUrl || undefined,  // Changed from ticketUrl to ticket_url
+        ticket_url: data.ticket_url || undefined,  // Changed from ticketUrl to ticket_url
         images: imageUrls, // Use combined existing + new images
       };
 
@@ -406,7 +406,7 @@ export function EventForm({ editId }: { editId?: string | null }) {
         </div>
          <FormField
               control={form.control}
-              name="ticketUrl"
+              name="ticket_url"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Ticket URL - Optional</FormLabel>

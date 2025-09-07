@@ -76,9 +76,9 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
         {event.price && event.price > 0 && (
           <DialogFooter className="p-6 pt-0 border-t mt-2">
              <div className='w-full flex flex-col gap-2'>
-                {event.ticketUrl ? (
-                    <Button asChild size="lg" className='w-full'>
-                        <Link href={event.ticketUrl} target="_blank">
+                 {event.ticket_url ? (
+                     <Button asChild size="lg" className='w-full'>
+                         <Link href={event.ticket_url} target="_blank">
                             <Ticket className="mr-2 h-5 w-5" />
                             Buy Ticket
                         </Link>
