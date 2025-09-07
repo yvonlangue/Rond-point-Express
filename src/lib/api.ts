@@ -53,7 +53,7 @@ interface UserStatsResponse {
 
 class SupabaseApiClient {
   private async request<T>(
-    operation: () => Promise<any>
+    operation: () => Promise<{ data?: T; error?: { message?: string } | null }>
   ): Promise<ApiResponse<T>> {
     try {
       const result = await operation()
