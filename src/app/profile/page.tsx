@@ -232,7 +232,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                       <div className="flex gap-2 items-center">
-                         {user?.publicMetadata?.isPremium && (
+                         {(user?.publicMetadata as any)?.isPremium && (
                           <Button variant="outline" size="icon" disabled>
                               <LineChart className="w-4 h-4" />
                               <span className="sr-only">Analytics</span>
