@@ -30,7 +30,15 @@ function SearchPageContent() {
     loadEvents();
   }, [query, category, location, artType, price, featured, dateFrom, dateTo, artTypes, accessibility]);
 
-  const handleSearch = (filters: any) => {
+  interface SearchFilters {
+    dateFrom?: Date;
+    dateTo?: Date;
+    artTypes?: string[];
+    location?: string;
+    accessibility?: string[];
+  }
+
+  const handleSearch = (filters: SearchFilters) => {
     // Update URL with filter parameters
     const params = new URLSearchParams();
     
@@ -40,7 +48,7 @@ function SearchPageContent() {
     if (filters.dateTo) {
       params.set('dateTo', filters.dateTo.toISOString());
     }
-    if (filters.artTypes?.length > 0) {
+    if (Array.isArray(filters.artTypes) && filters.artTypes.length > 0) {
       params.set('artTypes', filters.artTypes.join(','));
     }
     if (filters.location) {
@@ -62,12 +70,25 @@ function SearchPageContent() {
     router.push(`/search?${params.toString()}`);
   };
 
+  interface QueryParams {
+    search?: string;
+    category?: string;
+    location?: string;
+    artType?: string;
+    price?: 'free' | 'paid' | string;
+    featured?: boolean;
+    dateFrom?: string;
+    dateTo?: string;
+    accessibility?: string[] | string;
+    limit?: number;
+  }
+
   const loadEvents = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const searchParams: any = {};
+      const searchParams: QueryParams = {};
       
       if (query) searchParams.search = query;
       if (category) searchParams.category = category;
