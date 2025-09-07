@@ -60,20 +60,22 @@ export function EventForm({ editId }: { editId?: string | null }) {
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
 
+  const defaultValues: EventFormValues = {
+    title: '',
+    description: '',
+    location: '',
+    date: undefined as unknown as Date, // will be set by user
+    time: '19:00',
+    artType: undefined as unknown as (typeof artTypes)[number],
+    category: undefined as unknown as (typeof eventCategories)[number],
+    organizer: '',
+    price: 0,
+    ticket_url: '',
+  };
+
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      location: '',
-      date: undefined,
-      time: '19:00',
-      artType: undefined,
-      category: undefined,
-      organizer: '',
-      price: 0,
-      ticket_url: '',
-    },
+    defaultValues,
   });
 
   // Load event data when in edit mode
@@ -82,6 +84,15 @@ export function EventForm({ editId }: { editId?: string | null }) {
       loadEventData();
     }
   }, [editId, user]);
+
+  // Ensure clean slate when not in edit mode
+  useEffect(() => {
+    if (!editId) {
+      form.reset(defaultValues);
+      setExistingImages([]);
+      setUploadedImages([]);
+    }
+  }, [editId, form]);
 
   const handleDeleteExistingImage = (imageUrl: string) => {
     setExistingImages(prev => prev.filter(url => url !== imageUrl));
