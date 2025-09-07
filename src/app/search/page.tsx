@@ -54,7 +54,7 @@ function SearchPageContent() {
     if (filters.location) {
       params.set('location', filters.location);
     }
-    if (filters.accessibility?.length > 0) {
+    if (Array.isArray(filters.accessibility) && filters.accessibility.length > 0) {
       params.set('accessibility', filters.accessibility.join(','));
     }
     
