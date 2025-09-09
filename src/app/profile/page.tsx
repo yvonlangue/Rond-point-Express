@@ -42,7 +42,15 @@ export default function ProfilePage() {
   const router = useRouter();
   useUserSync(); // Automatically sync user with Supabase
   const [userEvents, setUserEvents] = useState<Event[]>([]);
-  const [userStats, setUserStats] = useState<any>(null);
+  type UserStats = {
+    totalEvents: number;
+    approvedEvents: number;
+    pendingEvents: number;
+    featuredEvents: number;
+    totalViews?: number;
+  } | null;
+
+  const [userStats, setUserStats] = useState<UserStats>(null);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [statsLoading, setStatsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -164,7 +172,7 @@ export default function ProfilePage() {
               <Alert variant="default" className="mb-8 bg-amber-50 border-amber-200 text-amber-900">
                  <Zap className="h-4 w-4 !text-amber-600" />
                 <AlertDescription>
-                  You've reached your limit of {FREE_EVENT_LIMIT} free events. 
+                  You&apos;ve reached your limit of {FREE_EVENT_LIMIT} free events. 
                   <Link href="/premium" className="font-bold underline hover:text-amber-700"> Upgrade to Premium</Link> to create unlimited events.
                 </AlertDescription>
               </Alert>
@@ -232,7 +240,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                       <div className="flex gap-2 items-center">
-                         {(user?.publicMetadata as any)?.isPremium && (
+                         {Boolean((user?.publicMetadata as { isPremium?: boolean })?.isPremium) && (
                           <Button variant="outline" size="icon" disabled>
                               <LineChart className="w-4 h-4" />
                               <span className="sr-only">Analytics</span>
@@ -261,7 +269,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="text-center text-muted-foreground py-12 border-2 border-dashed rounded-lg">
-                <p className="font-medium">You haven't created any events yet.</p>
+                <p className="font-medium">You haven&apos;t created any events yet.</p>
                 <p className="text-sm">Click the button above to get started!</p>
               </div>
             )}

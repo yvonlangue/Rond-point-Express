@@ -51,6 +51,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [pendingEvents, setPendingEvents] = useState<Event[]>([]);
+  const [approvedEvents, setApprovedEvents] = useState<Event[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
 
@@ -75,6 +76,12 @@ export default function AdminDashboard() {
       const pendingResponse = await eventsApi.getPending();
       if (pendingResponse.data) {
         setPendingEvents(pendingResponse.data.events);
+      }
+
+      // Fetch approved events for admin view
+      const approvedResponse = await eventsApi.getAll({ limit: 50 });
+      if (approvedResponse.data) {
+        setApprovedEvents(approvedResponse.data.events);
       }
 
       // For now, use mock stats since we don't have comprehensive admin stats API
@@ -134,7 +141,8 @@ export default function AdminDashboard() {
         description: 'Event approved successfully',
       });
       
-      fetchAdminData(); // Refresh data
+      // Refresh data immediately
+      await fetchAdminData();
     } catch (error) {
       console.error('Error approving event:', error);
       toast({
@@ -249,6 +257,7 @@ export default function AdminDashboard() {
       <Tabs defaultValue="moderation" className="space-y-6">
         <TabsList>
           <TabsTrigger value="moderation">Content Moderation</TabsTrigger>
+          <TabsTrigger value="approved">Approved Events</TabsTrigger>
           <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
@@ -296,6 +305,50 @@ export default function AdminDashboard() {
                           <XCircle className="w-4 h-4 mr-1" />
                           Reject
                         </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="approved" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                Approved Events ({approvedEvents.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {approvedEvents.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No approved events yet
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {approvedEvents.map((event) => (
+                    <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{event.title}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Organizer: {event.organizer.name} • Date: {new Date(event.date).toLocaleDateString()}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {event.art_type} • {event.category} • {event.location}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="default" className="bg-green-500">
+                          Approved
+                        </Badge>
+                        {event.featured && (
+                          <Badge variant="outline" className="text-yellow-600">
+                            Featured
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   ))}

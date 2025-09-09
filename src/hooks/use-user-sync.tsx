@@ -49,9 +49,13 @@ export function useUserSync() {
         }
       } catch (error) {
         console.error('Error syncing user:', error);
+        // Don't throw the error to prevent app crashes
       }
     };
 
-    syncUser();
+    // Add a small delay to ensure Clerk is fully loaded
+    const timeoutId = setTimeout(syncUser, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [user, isLoaded]);
 }

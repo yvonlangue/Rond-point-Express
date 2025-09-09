@@ -83,8 +83,6 @@ export const mockEvents: Event[] = [
     price: 15000,
     featured: true,
     status: 'approved',
-    featured: true,
-    status: 'approved',
     created_at: '2025-08-05T16:00:00.000Z',
     updated_at: '2025-08-05T16:00:00.000Z',
   },

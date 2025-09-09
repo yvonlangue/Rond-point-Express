@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/header';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
+import { UserSyncProvider } from '@/components/user-sync-provider';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -40,7 +41,11 @@ export default function RootLayout({
         <body className="antialiased">
           <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1 bg-background">{children}</main>
+            <main className="flex-1 bg-background">
+              <UserSyncProvider>
+                {children}
+              </UserSyncProvider>
+            </main>
           </div>
           <Toaster />
         </body>

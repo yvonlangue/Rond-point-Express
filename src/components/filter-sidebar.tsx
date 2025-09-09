@@ -19,8 +19,16 @@ const accessibilityOptions = [
   'Audio Description',
 ];
 
+interface FiltersPayload {
+  dateFrom?: Date;
+  dateTo?: Date;
+  artTypes?: string[];
+  location?: string;
+  accessibility?: string[];
+}
+
 interface FilterSidebarProps {
-  onFiltersChange?: (filters: any) => void;
+  onFiltersChange?: (filters: FiltersPayload) => void;
 }
 
 export function FilterSidebar({ onFiltersChange }: FilterSidebarProps) {

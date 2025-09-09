@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { EventForm } from '@/components/event-form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -9,12 +9,12 @@ import Link from 'next/link';
 import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs';
 import { useUserSync } from '@/hooks/use-user-sync';
 
-export default function CreateEventPage() {
+function CreateEventContent() {
   useUserSync(); // Automatically sync user with Supabase
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
   const isEditMode = !!editId;
-  
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <SignedOut>
@@ -50,5 +50,13 @@ export default function CreateEventPage() {
         </Card>
       </SignedIn>
     </div>
+  );
+}
+
+export default function CreateEventPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8 max-w-3xl">Loading...</div>}>
+      <CreateEventContent />
+    </Suspense>
   );
 }

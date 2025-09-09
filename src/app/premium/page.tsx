@@ -17,7 +17,7 @@ export default function PremiumPage() {
             <div className="text-center mb-12">
                 <h1 className="text-5xl font-bold tracking-tight">Go Premium</h1>
                 <p className="text-xl text-muted-foreground mt-4">
-                    Unlock powerful tools to maximize your event's reach and success.
+                    Unlock powerful tools to maximize your event&apos;s reach and success.
                 </p>
             </div>
 
@@ -64,7 +64,7 @@ export default function PremiumPage() {
                         </div>
                     </div>
                      <p className="text-sm text-muted-foreground pt-4">
-                        By clicking "Upgrade Now", you agree to our Terms of Service and Privacy Policy.
+                        By clicking &quot;Upgrade Now&quot;, you agree to our Terms of Service and Privacy Policy.
                         Your subscription will automatically renew each month, and you can cancel anytime.
                     </p>
                 </div>
