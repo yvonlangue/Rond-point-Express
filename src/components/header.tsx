@@ -33,6 +33,12 @@ export function Header() {
         >
           Search
         </Link>
+        <Link
+          href="/contact"
+          className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          Contact
+        </Link>
       </nav>
 
       <div className="flex items-center gap-4 ml-auto">
