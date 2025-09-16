@@ -21,6 +21,7 @@ import {
 interface ContactFormData {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   category: string;
   message: string;
@@ -31,6 +32,7 @@ export default function ContactPage() {
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
+    phone: '',
     subject: '',
     category: '',
     message: ''
@@ -54,6 +56,7 @@ export default function ContactPage() {
       setFormData({
         name: '',
         email: '',
+        phone: '',
         subject: '',
         category: '',
         message: ''
@@ -228,6 +231,17 @@ export default function ContactPage() {
                       required
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone / WhatsApp</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    placeholder="+1 555 123 4567"
+                  />
                 </div>
 
                 <div className="space-y-2">
