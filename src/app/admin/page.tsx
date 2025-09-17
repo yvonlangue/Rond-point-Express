@@ -539,7 +539,7 @@ export default function AdminDashboard() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => toggleFeaturedStatus(event.id, event.featured)}
+                                onClick={() => toggleFeaturedStatus(event.id, event.featured ?? false)}
                                 className="text-blue-600 hover:text-blue-700"
                               >
                                 <Star className="w-3 h-3 mr-1" />
