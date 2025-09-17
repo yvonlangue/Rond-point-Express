@@ -23,7 +23,8 @@ import {
   Trash2,
   Shield,
   BarChart3,
-  MessageSquare
+  MessageSquare,
+  Star
 } from 'lucide-react';
 
 interface AdminStats {
@@ -223,6 +224,38 @@ export default function AdminDashboard() {
     }
   };
 
+  const toggleFeaturedStatus = async (eventId: string, currentFeatured: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ featured: !currentFeatured })
+        .eq('id', eventId);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update local state for approved events
+      setApprovedEvents(prev => 
+        prev.map(event => 
+          event.id === eventId ? { ...event, featured: !currentFeatured } : event
+        )
+      );
+
+      toast({
+        title: 'Success',
+        description: `Event ${!currentFeatured ? 'featured' : 'unfeatured'} successfully`,
+      });
+    } catch (error) {
+      console.error('Error toggling featured status:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update featured status',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (!isLoaded || loadingStats) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -318,6 +351,7 @@ export default function AdminDashboard() {
         <TabsList>
           <TabsTrigger value="moderation">Content Moderation</TabsTrigger>
           <TabsTrigger value="approved">Approved Events</TabsTrigger>
+          <TabsTrigger value="featured">Featured Events</TabsTrigger>
           <TabsTrigger value="messages">Contact Messages</TabsTrigger>
           <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -410,9 +444,113 @@ export default function AdminDashboard() {
                             Featured
                           </Badge>
                         )}
+                        <Button
+                          size="sm"
+                          variant={event.featured ? "default" : "outline"}
+                          onClick={() => toggleFeaturedStatus(event.id, event.featured)}
+                          className="flex items-center gap-1"
+                        >
+                          <Star className="w-3 h-3" />
+                          {event.featured ? 'Unfeature' : 'Feature'}
+                        </Button>
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="featured" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                Featured Events Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h4 className="font-semibold text-yellow-800 mb-2">How Featured Events Work:</h4>
+                <ul className="text-sm text-yellow-700 space-y-1">
+                  <li>• <strong>Main Featured:</strong> The first featured event appears in the center of the homepage</li>
+                  <li>• <strong>Sidebar Featured:</strong> Up to 2 additional featured events appear in the "Most Popular" sidebar</li>
+                  <li>• <strong>Order:</strong> Featured events are displayed in the order they were created</li>
+                </ul>
+              </div>
+              
+              {approvedEvents.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No approved events available to feature
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Featured Events */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-green-600">Currently Featured ({approvedEvents.filter(e => e.featured).length})</h4>
+                      <div className="space-y-3">
+                        {approvedEvents.filter(event => event.featured).map((event, index) => (
+                          <div key={event.id} className="p-3 border border-green-200 bg-green-50 rounded-lg">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="outline" className="text-green-600 border-green-300">
+                                    #{index + 1}
+                                  </Badge>
+                                  <Badge variant="outline" className="text-yellow-600">
+                                    Featured
+                                  </Badge>
+                                </div>
+                                <h5 className="font-semibold text-sm">{event.title}</h5>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(event.date).toLocaleDateString()} • {event.location}
+                                </p>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => toggleFeaturedStatus(event.id, event.featured)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Star className="w-3 h-3 mr-1" />
+                                Unfeature
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Available Events */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-blue-600">Available to Feature ({approvedEvents.filter(e => !e.featured).length})</h4>
+                      <div className="space-y-3">
+                        {approvedEvents.filter(event => !event.featured).map((event) => (
+                          <div key={event.id} className="p-3 border border-blue-200 bg-blue-50 rounded-lg">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h5 className="font-semibold text-sm">{event.title}</h5>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(event.date).toLocaleDateString()} • {event.location}
+                                </p>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => toggleFeaturedStatus(event.id, event.featured)}
+                                className="text-blue-600 hover:text-blue-700"
+                              >
+                                <Star className="w-3 h-3 mr-1" />
+                                Feature
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
