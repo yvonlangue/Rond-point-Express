@@ -39,7 +39,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             alt={event.title}
             width={600}
             height={300}
-            className="w-full h-64 object-cover"
+            className="w-full h-auto object-contain"
             data-ai-hint="Douala gallery"
           />
         </div>

@@ -146,15 +146,15 @@ export default function Home() {
               <div className="space-y-4">
                 {sidebarFeaturedEvents.map((event) => (
                   <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleOpenModal(event)}>
-                    <div className="aspect-video bg-muted relative overflow-hidden">
+                    <div className="bg-muted relative overflow-hidden">
                       {event.images && event.images.length > 0 ? (
                         <img 
                           src={event.images[0]} 
                           alt={event.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-auto object-contain"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                        <div className="w-full h-32 bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
                           <Calendar className="w-8 h-8 text-primary/60" />
                         </div>
                       )}
@@ -182,19 +182,19 @@ export default function Home() {
           {/* Main Content - Featured Event */}
           <div className="lg:col-span-6">
             {mainEvent ? (
-              <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleOpenModal(mainEvent)}>
-                <div className="aspect-[4/3] bg-muted relative overflow-hidden">
-                  {mainEvent.images && mainEvent.images.length > 0 ? (
-                    <img 
-                      src={mainEvent.images[0]} 
-                      alt={mainEvent.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
-                      <Calendar className="w-16 h-16 text-primary/60" />
-                    </div>
-                  )}
+                     <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleOpenModal(mainEvent)}>
+                       <div className="bg-muted relative overflow-hidden">
+                         {mainEvent.images && mainEvent.images.length > 0 ? (
+                           <img 
+                             src={mainEvent.images[0]} 
+                             alt={mainEvent.title}
+                             className="w-full h-auto object-contain"
+                           />
+                         ) : (
+                           <div className="w-full h-64 bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                             <Calendar className="w-16 h-16 text-primary/60" />
+                           </div>
+                         )}
                   {mainEvent.featured && (
                     <Badge className="absolute top-4 left-4 bg-yellow-500">
                       <Star className="w-4 h-4 mr-1" />
@@ -245,20 +245,20 @@ export default function Home() {
               
               <div className="space-y-4">
                 {recentEvents.map((event) => (
-                  <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleOpenModal(event)}>
-                    <div className="aspect-video bg-muted relative overflow-hidden">
-                      {event.images && event.images.length > 0 ? (
-                        <img 
-                          src={event.images[0]} 
-                          alt={event.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
-                          <Calendar className="w-6 h-6 text-primary/60" />
-                        </div>
-                      )}
-                    </div>
+                         <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onClick={() => handleOpenModal(event)}>
+                           <div className="bg-muted relative overflow-hidden">
+                             {event.images && event.images.length > 0 ? (
+                               <img 
+                                 src={event.images[0]} 
+                                 alt={event.title}
+                                 className="w-full h-auto object-contain"
+                               />
+                             ) : (
+                               <div className="w-full h-32 bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+                                 <Calendar className="w-6 h-6 text-primary/60" />
+                               </div>
+                             )}
+                           </div>
                     <CardContent className="p-4">
                       <h3 className="font-semibold text-sm mb-2 line-clamp-2">{event.title}</h3>
                       <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{event.description}</p>

@@ -38,7 +38,7 @@ export function EventCard({ event, onOpenModal }: EventCardProps) {
           alt={event.title}
           width={400}
           height={250}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300"
           data-ai-hint="Cameroonian art"
         />
       </div>

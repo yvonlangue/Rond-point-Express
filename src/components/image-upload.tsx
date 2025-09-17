@@ -127,11 +127,11 @@ export function ImageUpload({
           {images.map((file, index) => (
             <Card key={index} className="relative">
               <CardContent className="p-2">
-                <div className="aspect-square relative bg-muted rounded-lg overflow-hidden">
+                <div className="relative bg-muted rounded-lg overflow-hidden">
                   <img
                     src={URL.createObjectURL(file)}
                     alt={`Preview ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto object-contain"
                   />
                   <Button
                     type="button"
@@ -163,11 +163,11 @@ export function ImageUpload({
             {existingImages.map((url, index) => (
               <Card key={`existing-${index}`} className="relative">
                 <CardContent className="p-2">
-                  <div className="aspect-square relative bg-muted rounded-lg overflow-hidden">
+                  <div className="relative bg-muted rounded-lg overflow-hidden">
                     <img
                       src={url}
                       alt={`Existing image ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-auto object-contain"
                     />
                     <div className="absolute top-1 right-1 bg-green-500 text-white text-xs px-1 rounded">
                       Existing
