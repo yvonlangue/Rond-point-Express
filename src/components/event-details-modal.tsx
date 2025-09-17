@@ -28,7 +28,6 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
     ? event.images[0] 
     : 'https://picsum.photos/600/400';
 
-  console.log('EventDetailsModal - Event:', event.title, 'Images:', event.images, 'Using URL:', imageUrl);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -73,28 +72,6 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             {event.description}
           </p>
         </div>
-        {event.price && event.price > 0 && (
-          <DialogFooter className="p-6 pt-0 border-t mt-2">
-             <div className='w-full flex flex-col gap-2'>
-                 {event.ticket_url ? (
-                     <Button asChild size="lg" className='w-full'>
-                         <Link href={event.ticket_url} target="_blank">
-                            <Ticket className="mr-2 h-5 w-5" />
-                            Buy Ticket
-                        </Link>
-                    </Button>
-                ) : (
-                    <Button size="lg" className='w-full' disabled>
-                       <Ticket className="mr-2 h-5 w-5" />
-                       Ticketing Not Available
-                    </Button>
-                )}
-                <p className='text-xs text-center text-muted-foreground'>
-                  Secure payment via Orange Money or MTN Mobile Money.
-                </p>
-            </div>
-          </DialogFooter>
-        )}
       </DialogContent>
     </Dialog>
   );
