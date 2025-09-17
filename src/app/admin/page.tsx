@@ -475,7 +475,7 @@ export default function AdminDashboard() {
                 <h4 className="font-semibold text-yellow-800 mb-2">How Featured Events Work:</h4>
                 <ul className="text-sm text-yellow-700 space-y-1">
                   <li>• <strong>Main Featured:</strong> The first featured event appears in the center of the homepage</li>
-                  <li>• <strong>Sidebar Featured:</strong> Up to 2 additional featured events appear in the "Most Popular" sidebar</li>
+                  <li>• <strong>Sidebar Featured:</strong> Up to 2 additional featured events appear in the &quot;Most Popular&quot; sidebar</li>
                   <li>• <strong>Order:</strong> Featured events are displayed in the order they were created</li>
                 </ul>
               </div>
