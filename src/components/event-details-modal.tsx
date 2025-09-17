@@ -32,7 +32,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl p-0 gap-0">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0 flex flex-col">
         <div className="relative">
           <Image
             src={imageUrl}
@@ -68,7 +68,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
             </div>
           </div>
         </DialogHeader>
-        <div className="px-6 pb-6 space-y-4">
+        <div className="px-6 pb-6 space-y-4 flex-1">
           <p className="text-base text-foreground/80 leading-relaxed">
             {event.description}
           </p>
