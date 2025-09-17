@@ -45,62 +45,28 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // Try direct Supabase first, then fallback to API route
-      let success = false;
-      let errorMessage = '';
+      console.log('Submitting contact form via API route...');
+      console.log('Form data:', formData);
+      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      try {
-        console.log('Attempting direct Supabase insert...');
-        
-        // Save message to Supabase
-        const { data, error } = await supabase
-          .from('contact_messages')
-          .insert([{
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone || null,
-            subject: formData.subject,
-            category: formData.category,
-            message: formData.message,
-            status: 'unread'
-          }])
-          .select();
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
 
-        if (error) {
-          throw error;
-        }
-        
-        success = true;
-        console.log('Direct Supabase insert successful');
-        
-      } catch (supabaseError) {
-        console.error('Direct Supabase failed:', supabaseError);
-        errorMessage = supabaseError instanceof Error ? supabaseError.message : 'Unknown error';
-        
-        // Fallback to API route
-        console.log('Trying API route fallback...');
-        
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'API request failed');
-        }
-
-        const result = await response.json();
-        success = true;
-        console.log('API route insert successful');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('API error response:', errorData);
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
 
-      if (!success) {
-        throw new Error(errorMessage);
-      }
+      const result = await response.json();
+      console.log('API success response:', result);
       
       toast({
         title: 'Message Sent!',

@@ -1,9 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+export async function GET() {
+  console.log('Contact API route GET called');
+  return NextResponse.json({ 
+    message: 'Contact API route is working',
+    timestamp: new Date().toISOString()
+  });
+}
+
 export async function POST(request: NextRequest) {
+  console.log('Contact API route called');
+  
   try {
     const body = await request.json();
+    console.log('Request body:', body);
+    
     const { name, email, phone, subject, category, message } = body;
 
     // Validate required fields
