@@ -79,9 +79,10 @@ export default function ContactPage() {
       });
     } catch (error) {
       console.error('Error saving contact message:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       toast({
         title: 'Error',
-        description: 'Failed to send message. Please try again.',
+        description: `Failed to send message: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: 'destructive',
       });
     } finally {

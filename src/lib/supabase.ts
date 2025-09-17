@@ -133,6 +133,44 @@ export interface Database {
           updated_at?: string
         }
       }
+      contact_messages: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          phone?: string
+          subject: string
+          category: string
+          message: string
+          status: 'unread' | 'read' | 'replied'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          phone?: string
+          subject: string
+          category: string
+          message: string
+          status?: 'unread' | 'read' | 'replied'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          phone?: string
+          subject?: string
+          category?: string
+          message?: string
+          status?: 'unread' | 'read' | 'replied'
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
