@@ -58,13 +58,15 @@ interface AdminStats {
 // Using Event type from lib/types instead of local interface
 
 interface User {
-  _id: string;
+  id: string;
+  clerk_id: string;
   name: string;
   email: string;
   role: string;
-  isPremium: boolean;
-  eventCount: number;
-  createdAt: string;
+  is_premium: boolean;
+  event_count: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface ContactMessage {
@@ -202,38 +204,55 @@ export default function AdminDashboard() {
         setContactMessages(messages || []);
       }
 
-      // For now, use mock stats since we don't have comprehensive admin stats API
-      // In production, you'd create admin-specific Supabase functions
-      setStats({
-        totalUsers: 150,
-        totalEvents: 45,
-        pendingEvents: pendingResponse.data?.events.length || 0,
-        premiumUsers: 12,
-        newUsersThisMonth: 8,
-        newEventsThisMonth: 5,
-      });
+      // Fetch real user statistics
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      // Mock users data for now
-      setUsers([
-        {
-          _id: '1',
-          name: 'John Doe',
-          email: 'john@example.com',
-          role: 'organizer',
-          isPremium: true,
-          eventCount: 5,
-          createdAt: '2024-01-15',
-        },
-        {
-          _id: '2',
-          name: 'Jane Smith',
-          email: 'jane@example.com',
-          role: 'organizer',
-          isPremium: false,
-          eventCount: 2,
-          createdAt: '2024-01-20',
-        },
-      ]);
+      if (usersError) {
+        console.error('Error fetching users:', usersError);
+      } else {
+        setUsers(usersData || []);
+      }
+
+      // Fetch real event statistics
+      const { data: allEventsData, error: eventsError } = await supabase
+        .from('events')
+        .select('*');
+
+      if (eventsError) {
+        console.error('Error fetching events:', eventsError);
+      }
+
+      // Calculate statistics
+      const totalUsers = usersData?.length || 0;
+      const totalEvents = allEventsData?.length || 0;
+      const pendingEventsCount = pendingResponse.data?.events.length || 0;
+      const premiumUsers = usersData?.filter(user => user.is_premium).length || 0;
+
+      // Calculate new users this month
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      const newUsersThisMonth = usersData?.filter(user => {
+        const userDate = new Date(user.created_at);
+        return userDate.getMonth() === currentMonth && userDate.getFullYear() === currentYear;
+      }).length || 0;
+
+      // Calculate new events this month
+      const newEventsThisMonth = allEventsData?.filter(event => {
+        const eventDate = new Date(event.created_at);
+        return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
+      }).length || 0;
+
+      setStats({
+        totalUsers,
+        totalEvents,
+        pendingEvents: pendingEventsCount,
+        premiumUsers,
+        newUsersThisMonth,
+        newEventsThisMonth,
+      });
 
     } catch (error) {
       console.error('Error fetching admin data:', error);
@@ -797,29 +816,32 @@ export default function AdminDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {users.map((user) => (
-                  <div key={user._id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{user.name}</h3>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                        {user.role}
-                      </Badge>
-                      {user.isPremium && (
-                        <Badge variant="outline" className="text-primary">
-                          Premium
-                        </Badge>
-                      )}
-                      <span className="text-sm text-muted-foreground">
-                        {user.eventCount} events
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                     <div className="space-y-4">
+                       {users.map((user) => (
+                         <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                           <div className="flex-1">
+                             <h3 className="font-semibold">{user.name}</h3>
+                             <p className="text-sm text-muted-foreground">{user.email}</p>
+                             <p className="text-xs text-muted-foreground">
+                               Joined: {new Date(user.created_at).toLocaleDateString()}
+                             </p>
+                           </div>
+                           <div className="flex items-center gap-2">
+                             <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                               {user.role}
+                             </Badge>
+                             {user.is_premium && (
+                               <Badge variant="outline" className="text-primary">
+                                 Premium
+                               </Badge>
+                             )}
+                             <span className="text-sm text-muted-foreground">
+                               {user.event_count} events
+                             </span>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
             </CardContent>
           </Card>
         </TabsContent>
