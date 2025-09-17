@@ -446,12 +446,12 @@ export default function AdminDashboard() {
                         )}
                         <Button
                           size="sm"
-                          variant={event.featured ? "default" : "outline"}
-                          onClick={() => toggleFeaturedStatus(event.id, event.featured)}
+                          variant={(event.featured ?? false) ? "default" : "outline"}
+                          onClick={() => toggleFeaturedStatus(event.id, event.featured ?? false)}
                           className="flex items-center gap-1"
                         >
                           <Star className="w-3 h-3" />
-                          {event.featured ? 'Unfeature' : 'Feature'}
+                          {(event.featured ?? false) ? 'Unfeature' : 'Feature'}
                         </Button>
                       </div>
                     </div>
