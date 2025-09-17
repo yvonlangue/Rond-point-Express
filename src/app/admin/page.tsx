@@ -193,6 +193,7 @@ export default function AdminDashboard() {
       }
 
       // Fetch contact messages
+      console.log('Fetching contact messages...');
       const { data: messages, error: messagesError } = await supabase
         .from('contact_messages')
         .select('*')
@@ -200,7 +201,9 @@ export default function AdminDashboard() {
 
       if (messagesError) {
         console.error('Error fetching contact messages:', messagesError);
+        console.error('Messages error details:', JSON.stringify(messagesError, null, 2));
       } else {
+        console.log('Successfully fetched contact messages:', messages);
         setContactMessages(messages || []);
       }
 
