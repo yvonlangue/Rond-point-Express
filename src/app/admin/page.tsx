@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { eventsApi } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import type { Event } from '@/lib/types';
 import { 
   Users, 
@@ -21,7 +22,8 @@ import {
   Edit,
   Trash2,
   Shield,
-  BarChart3
+  BarChart3,
+  MessageSquare
 } from 'lucide-react';
 
 interface AdminStats {
@@ -45,6 +47,19 @@ interface User {
   createdAt: string;
 }
 
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  category: string;
+  message: string;
+  status: 'unread' | 'read' | 'replied';
+  created_at: string;
+  updated_at: string;
+}
+
 export default function AdminDashboard() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
@@ -53,6 +68,7 @@ export default function AdminDashboard() {
   const [pendingEvents, setPendingEvents] = useState<Event[]>([]);
   const [approvedEvents, setApprovedEvents] = useState<Event[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
@@ -82,6 +98,18 @@ export default function AdminDashboard() {
       const approvedResponse = await eventsApi.getAll({ limit: 50 });
       if (approvedResponse.data) {
         setApprovedEvents(approvedResponse.data.events);
+      }
+
+      // Fetch contact messages
+      const { data: messages, error: messagesError } = await supabase
+        .from('contact_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (messagesError) {
+        console.error('Error fetching contact messages:', messagesError);
+      } else {
+        setContactMessages(messages || []);
       }
 
       // For now, use mock stats since we don't have comprehensive admin stats API
@@ -160,6 +188,38 @@ export default function AdminDashboard() {
       fetchAdminData(); // Refresh data
     } catch (error) {
       console.error('Error rejecting event:', error);
+    }
+  };
+
+  const updateMessageStatus = async (messageId: string, status: 'read' | 'replied') => {
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .update({ status })
+        .eq('id', messageId);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update local state
+      setContactMessages(prev => 
+        prev.map(msg => 
+          msg.id === messageId ? { ...msg, status } : msg
+        )
+      );
+
+      toast({
+        title: 'Success',
+        description: `Message marked as ${status}`,
+      });
+    } catch (error) {
+      console.error('Error updating message status:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update message status',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -258,6 +318,7 @@ export default function AdminDashboard() {
         <TabsList>
           <TabsTrigger value="moderation">Content Moderation</TabsTrigger>
           <TabsTrigger value="approved">Approved Events</TabsTrigger>
+          <TabsTrigger value="messages">Contact Messages</TabsTrigger>
           <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
@@ -349,6 +410,87 @@ export default function AdminDashboard() {
                             Featured
                           </Badge>
                         )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="messages" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                Contact Messages ({contactMessages.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {contactMessages.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">
+                  No contact messages yet
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {contactMessages.map((message) => (
+                    <div key={message.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{message.name}</h3>
+                          <p className="text-sm text-muted-foreground">{message.email}</p>
+                          {message.phone && (
+                            <p className="text-sm text-muted-foreground">Phone: {message.phone}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant={message.status === 'unread' ? 'destructive' : message.status === 'read' ? 'secondary' : 'default'}
+                          >
+                            {message.status}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(message.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-3">
+                        <Badge variant="outline" className="text-xs">
+                          {message.category}
+                        </Badge>
+                        <h4 className="font-medium mt-2">{message.subject}</h4>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-4">{message.message}</p>
+                      
+                      <div className="flex items-center gap-2">
+                        {message.status === 'unread' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => updateMessageStatus(message.id, 'read')}
+                          >
+                            Mark as Read
+                          </Button>
+                        )}
+                        {message.status !== 'replied' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => updateMessageStatus(message.id, 'replied')}
+                          >
+                            Mark as Replied
+                          </Button>
+                        )}
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => window.open(`mailto:${message.email}?subject=Re: ${message.subject}`)}
+                        >
+                          Reply via Email
+                        </Button>
                       </div>
                     </div>
                   ))}

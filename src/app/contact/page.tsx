@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/supabase';
 import { 
   Mail, 
   Phone, 
@@ -44,8 +45,23 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Save message to Supabase
+      const { data, error } = await supabase
+        .from('contact_messages')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          subject: formData.subject,
+          category: formData.category,
+          message: formData.message,
+          status: 'unread'
+        }])
+        .select();
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: 'Message Sent!',
@@ -62,6 +78,7 @@ export default function ContactPage() {
         message: ''
       });
     } catch (error) {
+      console.error('Error saving contact message:', error);
       toast({
         title: 'Error',
         description: 'Failed to send message. Please try again.',
