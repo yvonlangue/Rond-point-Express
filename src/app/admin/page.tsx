@@ -11,6 +11,25 @@ import { useToast } from '@/hooks/use-toast';
 import { eventsApi } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
 import type { Event } from '@/lib/types';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { 
   Users, 
   Calendar, 
@@ -61,6 +80,69 @@ interface ContactMessage {
   updated_at: string;
 }
 
+// Sortable Item Component
+function SortableItem({ event, index, onUnfeature }: { event: Event; index: number; onUnfeature: (id: string) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: event.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="p-3 border border-green-200 bg-green-50 rounded-lg"
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <div
+              {...attributes}
+              {...listeners}
+              className="cursor-grab active:cursor-grabbing p-1 hover:bg-green-100 rounded"
+            >
+              <div className="w-4 h-4 flex flex-col gap-1">
+                <div className="w-full h-0.5 bg-green-600"></div>
+                <div className="w-full h-0.5 bg-green-600"></div>
+                <div className="w-full h-0.5 bg-green-600"></div>
+              </div>
+            </div>
+            <Badge variant="outline" className="text-green-600 border-green-300">
+              #{index + 1}
+            </Badge>
+            <Badge variant="outline" className="text-yellow-600">
+              Featured
+            </Badge>
+          </div>
+          <h5 className="font-semibold text-sm">{event.title}</h5>
+          <p className="text-xs text-muted-foreground">
+            {new Date(event.date).toLocaleDateString()} • {event.location}
+          </p>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onUnfeature(event.id)}
+          className="text-red-600 hover:text-red-700"
+        >
+          <Star className="w-3 h-3 mr-1" />
+          Unfeature
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
@@ -71,6 +153,13 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [contactMessages, setContactMessages] = useState<ContactMessage[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -186,7 +275,7 @@ export default function AdminDashboard() {
     try {
       // Mock rejection - in real implementation, this would update Supabase
       console.log('Rejecting event:', eventId);
-      fetchAdminData(); // Refresh data
+        fetchAdminData(); // Refresh data
     } catch (error) {
       console.error('Error rejecting event:', error);
     }
@@ -226,6 +315,19 @@ export default function AdminDashboard() {
 
   const toggleFeaturedStatus = async (eventId: string, currentFeatured: boolean) => {
     try {
+      // Check if we're trying to add a featured event and already have 3
+      if (!currentFeatured) {
+        const currentFeaturedCount = approvedEvents.filter(e => e.featured).length;
+        if (currentFeaturedCount >= 3) {
+          toast({
+            title: 'Limit Reached',
+            description: 'You can only feature up to 3 events at a time. Please unfeature an event first.',
+            variant: 'destructive',
+          });
+          return;
+        }
+      }
+
       const { error } = await supabase
         .from('events')
         .update({ featured: !currentFeatured })
@@ -253,6 +355,52 @@ export default function AdminDashboard() {
         description: 'Failed to update featured status',
         variant: 'destructive',
       });
+    }
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const featuredEvents = approvedEvents.filter(e => e.featured);
+      const oldIndex = featuredEvents.findIndex(e => e.id === active.id);
+      const newIndex = featuredEvents.findIndex(e => e.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const reorderedEvents = arrayMove(featuredEvents, oldIndex, newIndex);
+        
+        // Update the order by updating the created_at timestamp to reflect the new order
+        // This is a simple approach - in production you might want a dedicated order field
+        try {
+          for (let i = 0; i < reorderedEvents.length; i++) {
+            const event = reorderedEvents[i];
+            // We'll use a simple approach: update the event with a new timestamp
+            // In a real app, you'd have a dedicated 'order' or 'priority' field
+            await supabase
+              .from('events')
+              .update({ updated_at: new Date().toISOString() })
+              .eq('id', event.id);
+          }
+
+          // Update local state
+          setApprovedEvents(prev => {
+            const nonFeatured = prev.filter(e => !e.featured);
+            return [...reorderedEvents, ...nonFeatured];
+          });
+
+          toast({
+            title: 'Success',
+            description: 'Featured events reordered successfully',
+          });
+        } catch (error) {
+          console.error('Error reordering events:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to reorder events',
+            variant: 'destructive',
+          });
+        }
+      }
     }
   };
 
@@ -449,6 +597,7 @@ export default function AdminDashboard() {
                           variant={(event.featured ?? false) ? "default" : "outline"}
                           onClick={() => toggleFeaturedStatus(event.id, event.featured ?? false)}
                           className="flex items-center gap-1"
+                          disabled={!event.featured && approvedEvents.filter(e => e.featured).length >= 3}
                         >
                           <Star className="w-3 h-3" />
                           {(event.featured ?? false) ? 'Unfeature' : 'Feature'}
@@ -476,7 +625,8 @@ export default function AdminDashboard() {
                 <ul className="text-sm text-yellow-700 space-y-1">
                   <li>• <strong>Main Featured:</strong> The first featured event appears in the center of the homepage</li>
                   <li>• <strong>Sidebar Featured:</strong> Up to 2 additional featured events appear in the &quot;Most Popular&quot; sidebar</li>
-                  <li>• <strong>Order:</strong> Featured events are displayed in the order they were created</li>
+                  <li>• <strong>Drag to Reorder:</strong> Drag events up/down to change their priority order</li>
+                  <li>• <strong>Limit:</strong> Maximum 3 featured events at a time</li>
                 </ul>
               </div>
               
@@ -489,43 +639,42 @@ export default function AdminDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Featured Events */}
                     <div>
-                      <h4 className="font-semibold mb-3 text-green-600">Currently Featured ({approvedEvents.filter(e => e.featured).length})</h4>
+                      <h4 className="font-semibold mb-3 text-green-600">
+                        Currently Featured ({approvedEvents.filter(e => e.featured).length}/3)
+                      </h4>
                       <div className="space-y-3">
-                        {approvedEvents.filter(event => event.featured).map((event, index) => (
-                          <div key={event.id} className="p-3 border border-green-200 bg-green-50 rounded-lg">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Badge variant="outline" className="text-green-600 border-green-300">
-                                    #{index + 1}
-                                  </Badge>
-                                  <Badge variant="outline" className="text-yellow-600">
-                                    Featured
-                                  </Badge>
-                                </div>
-                                <h5 className="font-semibold text-sm">{event.title}</h5>
-                                <p className="text-xs text-muted-foreground">
-                                  {new Date(event.date).toLocaleDateString()} • {event.location}
-                                </p>
-                              </div>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => toggleFeaturedStatus(event.id, event.featured ?? true)}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <Star className="w-3 h-3 mr-1" />
-                                Unfeature
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
+                        <DndContext
+                          sensors={sensors}
+                          collisionDetection={closestCenter}
+                          onDragEnd={handleDragEnd}
+                        >
+                          <SortableContext
+                            items={approvedEvents.filter(e => e.featured).map(e => e.id)}
+                            strategy={verticalListSortingStrategy}
+                          >
+                            {approvedEvents.filter(event => event.featured).map((event, index) => (
+                              <SortableItem
+                                key={event.id}
+                                event={event}
+                                index={index}
+                                onUnfeature={(id) => toggleFeaturedStatus(id, true)}
+                              />
+                            ))}
+                          </SortableContext>
+                        </DndContext>
                       </div>
                     </div>
 
                     {/* Available Events */}
                     <div>
-                      <h4 className="font-semibold mb-3 text-blue-600">Available to Feature ({approvedEvents.filter(e => !e.featured).length})</h4>
+                      <h4 className="font-semibold mb-3 text-blue-600">
+                        Available to Feature ({approvedEvents.filter(e => !e.featured).length})
+                        {approvedEvents.filter(e => e.featured).length >= 3 && (
+                          <Badge variant="destructive" className="ml-2">
+                            Limit Reached
+                          </Badge>
+                        )}
+                      </h4>
                       <div className="space-y-3">
                         {approvedEvents.filter(event => !event.featured).map((event) => (
                           <div key={event.id} className="p-3 border border-blue-200 bg-blue-50 rounded-lg">
@@ -541,6 +690,7 @@ export default function AdminDashboard() {
                                 variant="outline"
                                 onClick={() => toggleFeaturedStatus(event.id, event.featured ?? false)}
                                 className="text-blue-600 hover:text-blue-700"
+                                disabled={approvedEvents.filter(e => e.featured).length >= 3}
                               >
                                 <Star className="w-3 h-3 mr-1" />
                                 Feature

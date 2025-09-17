@@ -121,45 +121,45 @@ export default function ProfilePage() {
     );
   }
 
-  return (
+    return (
     <div className="container mx-auto px-4 py-8">
       <SignedOut>
         <div className="max-w-md mx-auto text-center">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">Access Your Dashboard</CardTitle>
-              <CardDescription>
-                Sign in to manage your events or create a new account to get started.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">Access Your Dashboard</CardTitle>
+            <CardDescription>
+              Sign in to manage your events or create a new account to get started.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
               <SignInButton mode="modal">
                 <Button size="lg" className="w-full">
                   <LogIn className="mr-2 h-4 w-4" /> Sign In
-                </Button>
+            </Button>
               </SignInButton>
-            </CardContent>
-          </Card>
-        </div>
+          </CardContent>
+        </Card>
+      </div>
       </SignedOut>
 
       <SignedIn>
-        <div className="grid gap-12 md:grid-cols-[1fr_300px]">
-          <div>
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-4xl font-bold">My Dashboard</h1>
+      <div className="grid gap-12 md:grid-cols-[1fr_300px]">
+        <div>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-4xl font-bold">My Dashboard</h1>
                 <p className="text-muted-foreground">Welcome back, {user?.firstName || user?.emailAddresses[0]?.emailAddress}!</p>
-              </div>
+            </div>
               <div className="flex gap-2">
                 <Button variant="outline" onClick={loadUserData} disabled={eventsLoading}>
                   <RefreshCw className={`h-4 w-4 mr-2 ${eventsLoading ? 'animate-spin' : ''}`} />
                   Refresh
                 </Button>
                 <Button asChild disabled={!user?.publicMetadata?.isPremium && userEvents.length >= FREE_EVENT_LIMIT}>
-                  <Link href="/create-event">Create New Event</Link>
-                </Button>
-              </div>
+              <Link href="/create-event">Create New Event</Link>
+            </Button>
+          </div>
             </div>
 
             {error && (
@@ -169,14 +169,14 @@ export default function ProfilePage() {
             )}
 
             {!user?.publicMetadata?.isPremium && userEvents.length >= FREE_EVENT_LIMIT && (
-              <Alert variant="default" className="mb-8 bg-amber-50 border-amber-200 text-amber-900">
-                 <Zap className="h-4 w-4 !text-amber-600" />
-                <AlertDescription>
+            <Alert variant="default" className="mb-8 bg-amber-50 border-amber-200 text-amber-900">
+               <Zap className="h-4 w-4 !text-amber-600" />
+              <AlertDescription>
                   You&apos;ve reached your limit of {FREE_EVENT_LIMIT} free events. 
-                  <Link href="/premium" className="font-bold underline hover:text-amber-700"> Upgrade to Premium</Link> to create unlimited events.
-                </AlertDescription>
-              </Alert>
-            )}
+                <Link href="/premium" className="font-bold underline hover:text-amber-700"> Upgrade to Premium</Link> to create unlimited events.
+              </AlertDescription>
+            </Alert>
+          )}
 
             {/* User Stats */}
             {userStats && (
@@ -221,63 +221,63 @@ export default function ProfilePage() {
                 ))}
               </div>
             ) : userEvents.length > 0 ? (
-              <div className="space-y-4">
+            <div className="space-y-4">
                 {userEvents.map(event => (
-                  <Card key={event.id} className="border">
-                    <CardContent className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-lg">{event.title}</h3>
-                        <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>{format(new Date(event.date), 'MMM d, yyyy')}</span>
-                        </div>
-                        <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                          <MapPin className="w-4 h-4" />
-                          <span>{event.location}</span>
-                        </div>
+                <Card key={event.id} className="border">
+                  <CardContent className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg">{event.title}</h3>
+                      <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{format(new Date(event.date), 'MMM d, yyyy')}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+                        <MapPin className="w-4 h-4" />
+                        <span>{event.location}</span>
+                      </div>
                         <div className="text-sm text-muted-foreground mt-1">
                           Status: <span className="capitalize">{event.status || 'pending'}</span>
                         </div>
-                      </div>
-                      <div className="flex gap-2 items-center">
+                    </div>
+                    <div className="flex gap-2 items-center">
                          {Boolean((user?.publicMetadata as { isPremium?: boolean })?.isPremium) && (
-                          <Button variant="outline" size="icon" disabled>
-                              <LineChart className="w-4 h-4" />
-                              <span className="sr-only">Analytics</span>
-                          </Button>
-                         )}
+                        <Button variant="outline" size="icon" disabled>
+                            <LineChart className="w-4 h-4" />
+                            <span className="sr-only">Analytics</span>
+                        </Button>
+                       )}
                         <Button 
                           variant="outline" 
                           size="icon"
                           onClick={() => handleEditEvent(event.id)}
                         >
-                          <Edit className="w-4 h-4" />
-                          <span className="sr-only">Edit</span>
-                        </Button>
+                        <Edit className="w-4 h-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
                         <Button 
                           variant="destructive" 
                           size="icon"
                           onClick={() => handleDeleteEvent(event.id)}
                         >
-                          <Trash2 className="w-4 h-4" />
-                          <span className="sr-only">Delete</span>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-muted-foreground py-12 border-2 border-dashed rounded-lg">
+                        <Trash2 className="w-4 h-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-muted-foreground py-12 border-2 border-dashed rounded-lg">
                 <p className="font-medium">You haven&apos;t created any events yet.</p>
-                <p className="text-sm">Click the button above to get started!</p>
-              </div>
-            )}
-          </div>
-          <aside className="space-y-8">
-            {!user?.publicMetadata?.isPremium && <PremiumUpgradeCTA />}
-          </aside>
+              <p className="text-sm">Click the button above to get started!</p>
+            </div>
+          )}
         </div>
+        <aside className="space-y-8">
+            {!user?.publicMetadata?.isPremium && <PremiumUpgradeCTA />}
+        </aside>
+      </div>
       </SignedIn>
     </div>
   );
